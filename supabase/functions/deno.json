@@ -1,0 +1,9 @@
+{
+  "nodeModulesDir": "auto",
+  "imports": {
+    "otpauth": "npm:otpauth@9"
+  },
+  "compilerOptions": {
+    "lib": ["deno.window"]
+  }
+}

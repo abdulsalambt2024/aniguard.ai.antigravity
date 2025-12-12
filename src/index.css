@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Primary - Indigo #6366F1 */
+    --primary: 239 84% 67%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Secondary - Emerald #10B981 */
+    --secondary: 160 84% 39%;
+    --secondary-foreground: 0 0% 100%;
+    
+    /* Accent - Amber #F59E0B */
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 100%;
+    
+    /* Background - Slate #F8FAFC */
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 239 84% 67%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --radius: 0.5rem;
+    
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 239 84% 67%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 239 84% 67%;
+  }
+
+  .dark {
+    /* Background - Slate #0F172A */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    
+    --card: 224 71% 4%;
+    --card-foreground: 210 40% 98%;
+    
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
+    
+    --primary: 239 84% 67%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 160 84% 39%;
+    --secondary-foreground: 0 0% 100%;
+    
+    --accent: 38 92% 50%;
+    --accent-foreground: 0 0% 100%;
+    
+    --muted: 215 28% 17%;
+    --muted-foreground: 217 33% 64%;
+    
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 239 84% 67%;
+    
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    
+    /* Sidebar */
+    --sidebar-background: 224 71% 4%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 239 84% 67%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 28% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 215 28% 17%;
+    --sidebar-ring: 239 84% 67%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

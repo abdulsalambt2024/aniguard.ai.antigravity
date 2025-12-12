@@ -1,0 +1,37 @@
+project_id = "hbkptilrqqsqjlkabpbe"
+
+[functions.chatbot]
+verify_jwt = true
+
+[functions.setup-2fa]
+verify_jwt = true
+
+[functions.verify-2fa]
+verify_jwt = true
+
+[functions.disable-2fa]
+verify_jwt = true
+
+[functions.ai-studio]
+verify_jwt = true
+
+[functions.create-user]
+verify_jwt = true
+
+[functions.log-error]
+verify_jwt = true
+
+[functions.initiate-payment]
+verify_jwt = false
+
+[functions.verify-payment]
+verify_jwt = false
+
+[functions.payment-webhook]
+verify_jwt = false
+
+[functions.send-donation-email]
+verify_jwt = false
+
+[functions.text-to-speech]
+verify_jwt = true

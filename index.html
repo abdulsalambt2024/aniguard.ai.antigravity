@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="https://storage.googleapis.com/gpt-engineer-file-uploads/5KXrdGhlrgd1vKpqZ0o29mqZkxA2/uploads/1763490190885-1000285065.png">
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#6366F1" />
+    <meta name="description" content="Parivartan - Community engagement platform with role-based access control">
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Parivartan</title>
+
+    
+    
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@Lovable" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <meta property="og:title" content="Parivartan">
+  <meta name="twitter:title" content="Parivartan">
+  <meta property="og:description" content="Parivartan - Community engagement platform with role-based access control">
+  <meta name="twitter:description" content="Parivartan - Community engagement platform with role-based access control">
+</head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+{
+  "name": "Parivartan",
+  "short_name": "Parivartan",
+  "description": "Community engagement platform with role-based access control",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#6366F1",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/placeholder.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/placeholder.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["social", "productivity"],
+  "shortcuts": [
+    {
+      "name": "Posts",
+      "url": "/posts",
+      "description": "View and create posts"
+    },
+    {
+      "name": "Events",
+      "url": "/events",
+      "description": "Browse upcoming events"
+    },
+    {
+      "name": "Chat",
+      "url": "/chat",
+      "description": "Open chat messages"
+    }
+  ]
+}
