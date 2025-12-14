@@ -1,0 +1,9 @@
+@echo off
+echo Adding all changes...
+git add .
+echo Committing changes...
+git commit -m "Update: UI Overhaul, Gemini Chatbot, Chat Fixes, and Moderation"
+echo Pushing to GitLab...
+git push -u origin master
+echo Done!
+pause

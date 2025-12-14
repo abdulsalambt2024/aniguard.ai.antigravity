@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,20 +6,20 @@
 
 @layer base {
   :root {
-    /* Primary - Indigo #6366F1 */
-    --primary: 239 84% 67%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary - Rose 500 (Lovable Red/Pink) */
+    --primary: 346 87% 60%;
+    --primary-foreground: 355 100% 100%;
     
-    /* Secondary - Emerald #10B981 */
-    --secondary: 160 84% 39%;
-    --secondary-foreground: 0 0% 100%;
+    /* Secondary - Purple 500 */
+    --secondary: 270 95% 75%;
+    --secondary-foreground: 270 60% 99%;
     
-    /* Accent - Amber #F59E0B */
+    /* Accent - Amber/Gold */
     --accent: 38 92% 50%;
     --accent-foreground: 0 0% 100%;
     
-    /* Background - Slate #F8FAFC */
-    --background: 210 40% 98%;
+    /* Background - Very subtle warm white */
+    --background: 330 30% 99%;
     --foreground: 222 47% 11%;
     
     --card: 0 0% 100%;
@@ -28,68 +28,68 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
     
-    --muted: 210 40% 96%;
+    --muted: 330 20% 96%;
     --muted-foreground: 215 16% 47%;
     
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 239 84% 67%;
+    --border: 330 20% 93%;
+    --input: 330 20% 93%;
+    --ring: 346 87% 60%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
-    --radius: 0.5rem;
+    --radius: 1rem; /* More rounded corners */
     
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 239 84% 67%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 346 87% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 239 84% 67%;
+    --sidebar-accent: 330 20% 96%;
+    --sidebar-accent-foreground: 240 5.3% 26.1%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 346 87% 60%;
   }
 
   .dark {
-    /* Background - Slate #0F172A */
-    --background: 222 47% 11%;
+    /* Background - Deep Purple/Slate */
+    --background: 260 40% 8%;
     --foreground: 210 40% 98%;
     
-    --card: 224 71% 4%;
+    --card: 260 40% 10%;
     --card-foreground: 210 40% 98%;
     
-    --popover: 224 71% 4%;
+    --popover: 260 40% 10%;
     --popover-foreground: 210 40% 98%;
     
-    --primary: 239 84% 67%;
+    --primary: 346 87% 60%;
     --primary-foreground: 0 0% 100%;
     
-    --secondary: 160 84% 39%;
+    --secondary: 270 95% 65%;
     --secondary-foreground: 0 0% 100%;
     
     --accent: 38 92% 50%;
     --accent-foreground: 0 0% 100%;
     
-    --muted: 215 28% 17%;
+    --muted: 260 30% 15%;
     --muted-foreground: 217 33% 64%;
     
-    --border: 215 28% 17%;
-    --input: 215 28% 17%;
-    --ring: 239 84% 67%;
+    --border: 260 30% 15%;
+    --input: 260 30% 15%;
+    --ring: 346 87% 60%;
     
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
     
     /* Sidebar */
-    --sidebar-background: 224 71% 4%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 239 84% 67%;
+    --sidebar-background: 260 40% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 346 87% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 28% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 28% 17%;
-    --sidebar-ring: 239 84% 67%;
+    --sidebar-accent: 260 30% 15%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 260 30% 15%;
+    --sidebar-ring: 346 87% 60%;
   }
 }
 
@@ -99,6 +99,16 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Outfit', 'Inter', sans-serif;
+  }
+  
+  /* Smooth scrolling and glassmorphism utilities */
+  .glass-card {
+    @apply bg-white/70 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-lg;
+  }
+  
+  .glass-button {
+    @apply bg-white/20 hover:bg-white/30 backdrop-blur-sm border border-white/20 transition-all duration-300;
   }
 }

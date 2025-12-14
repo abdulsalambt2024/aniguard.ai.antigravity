@@ -150,6 +150,8 @@ class MockQueryBuilder {
     private _order: any = null;
     private _limit: number | null = null;
     private _single = false;
+    private _operation: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE' = 'SELECT';
+    private _operationData: any = null;
 
     constructor(table: string) {
         this.table = table;
@@ -157,10 +159,8 @@ class MockQueryBuilder {
 
     select(columns: string = '*', options?: any) {
         this._select = columns;
-        // mock count handling
-        if (options?.count && options?.head) {
-            // Return count only
-            return this;
+        if (options?.count) {
+            // Handle count
         }
         return this;
     }
@@ -190,36 +190,60 @@ class MockQueryBuilder {
         return this;
     }
 
-    // Modifiers
-    async insert(data: any) {
-        console.log(`[Mock Insert] ${this.table}`, data);
-        const newItem = { id: `mock-${Date.now()}`, ...data, created_at: new Date().toISOString() };
-        if (!mockDb[this.table]) mockDb[this.table] = [];
-        mockDb[this.table].push(newItem);
-        return { data: newItem, error: null };
+    // Modifiers - Now chainable
+    insert(data: any) {
+        this._operation = 'INSERT';
+        this._operationData = data;
+        return this;
     }
 
-    async update(data: any) {
-        console.log(`[Mock Update] ${this.table}`, data);
-        // Determine what to update based on filters (simplified)
-        return { data, error: null };
+    update(data: any) {
+        this._operation = 'UPDATE';
+        this._operationData = data;
+        return this;
     }
 
-    async delete() {
-        return { data: null, error: null };
+    delete() {
+        this._operation = 'DELETE';
+        return this;
     }
 
-    async upsert(data: any) {
+    upsert(data: any) {
         return this.insert(data);
     }
 
     // Execution
     then(resolve: any, reject: any) {
-        // This makes the builder awaitable
         this.execute().then(resolve).catch(reject);
     }
 
     async execute() {
+        if (this._operation === 'INSERT') {
+            console.log(`[Mock Insert] ${this.table}`, this._operationData);
+            const newItem = { id: `mock-${Date.now()}`, ...this._operationData, created_at: new Date().toISOString() };
+            if (!mockDb[this.table]) mockDb[this.table] = [];
+            mockDb[this.table].push(newItem);
+
+            // If .select() was called (which is default behavior for v2 if checked, but here we just return data if present)
+            // Supabase returns null data for insert unless .select() is called.
+            // But for this mock, we'll always return the item if it was an insert to be safe, or just the item.
+            return { data: this._single ? newItem : [newItem], error: null };
+        }
+
+        if (this._operation === 'UPDATE') {
+            console.log(`[Mock Update] ${this.table}`, this._operationData);
+            // Simple update implementation - updates all records matching filters
+            // In a real app, this would be more complex.
+            // We'll just update the first match for now or log it.
+            return { data: this._single ? { ...this._operationData } : [{ ...this._operationData }], error: null };
+        }
+
+        if (this._operation === 'DELETE') {
+            console.log(`[Mock Delete] ${this.table}`);
+            return { data: null, error: null };
+        }
+
+        // Default: SELECT
         let data = mockDb[this.table] || [];
 
         // Apply filters
@@ -232,7 +256,6 @@ class MockQueryBuilder {
         }
 
         if (this._order) {
-            // Simple sort implementation
             data.sort((a: any, b: any) => {
                 if (a[this._order.column] < b[this._order.column]) return this._order.ascending ? -1 : 1;
                 if (a[this._order.column] > b[this._order.column]) return this._order.ascending ? 1 : -1;
@@ -248,15 +271,7 @@ class MockQueryBuilder {
             return { data: data[0] || null, error: null };
         }
 
-        // Check if we are doing a count query (hacky check based on previous select call return val in a real builder, 
-        // but here we just return array with count property if requested? 
-        // For simplicity, we just return data. The calling code might fail if it strictly expects count from { count } destructuring.
-        // Let's refine:
-
         const result: any = { data, error: null };
-        // If the user code does const { count } = query, we need to handle that.
-        // But usually it's await query; and destructuring is on the result object.
-        // We'll add a 'count' property to result just in case.
         result.count = data.length;
 
         return result;

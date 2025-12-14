@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MessageCircle, X, Send, Volume2, VolumeX, Loader2, Bot } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { chatbotMessageSchema } from '@/lib/validation';
+import { sendMessageToGemini } from '@/services/geminiService';
+import { checkContent } from '@/utils/moderation';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -47,7 +49,7 @@ export function EnhancedChatbot() {
 
     try {
       setIsSpeaking(true);
-      
+
       const { data, error } = await supabase.functions.invoke('text-to-speech', {
         body: { text }
       });
@@ -60,11 +62,11 @@ export function EnhancedChatbot() {
           { type: 'audio/mpeg' }
         );
         const audioUrl = URL.createObjectURL(audioBlob);
-        
+
         if (audioRef.current) {
           audioRef.current.pause();
         }
-        
+
         audioRef.current = new Audio(audioUrl);
         audioRef.current.onended = () => {
           setIsSpeaking(false);
@@ -104,37 +106,45 @@ export function EnhancedChatbot() {
       return;
     }
 
+    // Content Moderation
+    const moderation = checkContent(input.trim());
+    if (!moderation.isClean) {
+      toast({
+        title: 'Message Blocked',
+        description: `Your message was blocked: ${moderation.reason}`,
+        variant: 'destructive'
+      });
+      return;
+    }
+
     const userMessage = validation.data.message;
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     setIsLoading(true);
 
     try {
-      const faqContext = faqData?.map(f => `Q: ${f.question}\nA: ${f.answer}`).join('\n\n') || '';
-      
-      const { data, error } = await supabase.functions.invoke('chatbot', {
-        body: {
-          message: userMessage,
-          faqContext,
-          conversationHistory: messages.slice(-10)
-        }
-      });
+      // Use Gemini Service
+      const historyLegacy = messages.slice(-10).map(m => ({
+        role: m.role,
+        parts: m.content
+      }));
 
-      if (error) throw error;
+      const assistantMessage = await sendMessageToGemini(userMessage, historyLegacy);
 
-      const assistantMessage = data?.response || 'I apologize, but I encountered an issue. Please try again.';
-      
       setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
-      
+
       // Speak the response
       speakText(assistantMessage);
 
-      // Save to database
+      // Save to database (optional log)
       if (user) {
-        await supabase.from('chatbot_conversations').insert({
+        // We can still try to save to DB if it exists, otherwise ignore error
+        supabase.from('chatbot_conversations').insert({
           user_id: user.id,
           message: userMessage,
           response: assistantMessage
+        }).then(({ error }) => {
+          if (error) console.error("Failed to save conversation:", error);
         });
       }
     } catch (error) {
@@ -236,11 +246,10 @@ export function EnhancedChatbot() {
                     className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     <div
-                      className={`max-w-[85%] rounded-2xl px-4 py-2 ${
-                        msg.role === 'user'
-                          ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-br-md'
-                          : 'bg-muted rounded-bl-md'
-                      }`}
+                      className={`max-w-[85%] rounded-2xl px-4 py-2 ${msg.role === 'user'
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-br-md'
+                        : 'bg-muted rounded-bl-md'
+                        }`}
                     >
                       <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
                     </div>
@@ -274,9 +283,9 @@ export function EnhancedChatbot() {
                   disabled={isLoading}
                   className="flex-1 rounded-full"
                 />
-                <Button 
-                  type="submit" 
-                  size="icon" 
+                <Button
+                  type="submit"
+                  size="icon"
                   className="rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600"
                   disabled={isLoading || !input.trim()}
                 >

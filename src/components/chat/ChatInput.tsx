@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { checkContent } from '@/utils/moderation';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -11,9 +13,21 @@ interface ChatInputProps {
 export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   const [message, setMessage] = useState('');
 
+  const { toast } = useToast();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
+      const moderation = checkContent(message.trim());
+      if (!moderation.isClean) {
+        toast({
+          title: 'Message Blocked',
+          description: `Your message was blocked: ${moderation.reason}`,
+          variant: 'destructive'
+        });
+        return;
+      }
+
       onSendMessage(message);
       setMessage('');
     }
