@@ -1,3 +1,10 @@
+# Parivartan 2.0 (Lovable Project)
+**Version 2.0 Updates Implemented**:
+- 🎨 **UI Overhaul**: New Loveable Pink/Purple theme with glassmorphism.
+- 💬 **Chat Fixed**: Real-time messaging (1-1 & Group) enabled.
+- 🤖 **Gemini AI**: Smart chatbot integration.
+- 🛡️ **Moderation**: Advanced content filtering.
+
 # Welcome to your Lovable project
 
 ## Project info
