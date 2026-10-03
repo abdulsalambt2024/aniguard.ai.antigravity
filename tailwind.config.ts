@@ -59,7 +59,9 @@ export default {
         },
       },
       fontFamily: {
-        sans: ["Outfit", "Inter", "sans-serif"],
+        sans: ["'Noto Sans'", "'IBM Plex Sans'", "sans-serif"],
+        heading: ["'IBM Plex Sans'", "'Noto Sans'", "sans-serif"],
+        mono: ["'JetBrains Mono'", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",

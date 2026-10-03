@@ -1,0 +1,10 @@
+
+{
+  "name": "AniGuard AI - Animal Intelligence Platform",
+  "description": "An AI-powered platform for Indian livestock farmers and pet owners providing disease detection, regional outbreak prediction, and biological risk-based selling advice.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

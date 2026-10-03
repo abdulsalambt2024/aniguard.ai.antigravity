@@ -50,8 +50,8 @@ const App = () => (
               {/* Public route */}
               <Route path="/auth" element={<Auth />} />
               
-              {/* Protected routes */}
-              <Route path="/" element={<Layout><ProtectedRoute><Home /></ProtectedRoute></Layout>} />
+              {/* AniGuard Master Livestock Healthcare & Intelligence Platform */}
+              <Route path="/" element={<Home />} />
               <Route path="/posts" element={<Layout><ProtectedRoute><Posts /></ProtectedRoute></Layout>} />
               <Route path="/events" element={<Layout><ProtectedRoute><Events /></ProtectedRoute></Layout>} />
               <Route path="/chat" element={<Layout><ProtectedRoute><Chat /></ProtectedRoute></Layout>} />
