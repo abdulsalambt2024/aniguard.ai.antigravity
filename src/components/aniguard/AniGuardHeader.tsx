@@ -8,6 +8,8 @@ interface AniGuardHeaderProps {
   userEmail?: string | null;
   userRole?: string | null;
   onSignOut?: () => void;
+  onUpgradeClick?: () => void;
+  activePlanTier?: 'free' | 'pro' | 'enterprise';
 }
 
 export const AniGuardHeader: React.FC<AniGuardHeaderProps> = ({
@@ -17,6 +19,8 @@ export const AniGuardHeader: React.FC<AniGuardHeaderProps> = ({
   userEmail,
   userRole,
   onSignOut,
+  onUpgradeClick,
+  activePlanTier = 'free',
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -60,7 +64,7 @@ export const AniGuardHeader: React.FC<AniGuardHeaderProps> = ({
             {userRole && getRoleBadge()}
           </div>
           <p className="text-[11px] text-slate-400 hidden sm:block font-normal">
-            AI-Powered Livestock Healthcare & Farm Intelligence
+            Veterinary Intelligence & Herd Health
           </p>
         </div>
       </div>
@@ -76,13 +80,31 @@ export const AniGuardHeader: React.FC<AniGuardHeaderProps> = ({
           <Phone className="w-4 h-4 fill-current" />
         </button>
 
-        {/* Premium Lite Badge */}
+        {/* Subscription / Upgrade Badge */}
         <button
           type="button"
-          className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#1E3A34] bg-[#0C1E20] hover:bg-[#122A2D] text-[#34D399] text-xs font-semibold transition"
+          onClick={onUpgradeClick}
+          className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition ${
+            activePlanTier === 'enterprise'
+              ? 'border-[#D4AF37]/60 bg-[#291F0E] text-[#D4AF37] hover:bg-[#382B14]'
+              : activePlanTier === 'pro'
+              ? 'border-emerald-500 bg-[#0E2E25] text-emerald-300 hover:bg-[#134E3E]'
+              : 'border-[#1E3A34] bg-[#0C1E20] hover:bg-[#122A2D] text-[#34D399]'
+          }`}
+          title="Manage Subscription & Razorpay Billing"
         >
-          <Star className="w-3.5 h-3.5 fill-[#34D399]" />
-          <span>Premium Lite</span>
+          {activePlanTier === 'enterprise' ? (
+            <Crown className="w-3.5 h-3.5 fill-[#D4AF37]" />
+          ) : (
+            <Star className="w-3.5 h-3.5 fill-[#34D399]" />
+          )}
+          <span>
+            {activePlanTier === 'enterprise'
+              ? 'Clinic Hub'
+              : activePlanTier === 'pro'
+              ? 'AniGuard Pro'
+              : 'Upgrade to Pro'}
+          </span>
         </button>
 
         {/* Auth / Account Button */}
@@ -95,7 +117,7 @@ export const AniGuardHeader: React.FC<AniGuardHeaderProps> = ({
           }`}
         >
           <ShieldCheck className={`w-3.5 h-3.5 ${userEmail ? 'text-emerald-400' : 'text-slate-400'}`} />
-          <span>{userEmail ? 'Live Auth' : 'Sign In'}</span>
+          <span>{userEmail ? 'Verified' : 'Sign In'}</span>
         </button>
 
         {/* Profile Avatar & Dropdown */}
@@ -141,6 +163,18 @@ export const AniGuardHeader: React.FC<AniGuardHeaderProps> = ({
                 >
                   <UserIcon className="w-3.5 h-3.5 text-slate-400" />
                   <span>{userEmail ? 'Manage Account' : 'Sign In / Register'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    onUpgradeClick?.();
+                  }}
+                  className="w-full px-2.5 py-1.5 rounded-lg text-left text-xs text-slate-300 hover:text-white hover:bg-[#101F2F] flex items-center gap-2"
+                >
+                  <Star className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Subscription & Invoices</span>
                 </button>
 
                 {userEmail && onSignOut && (

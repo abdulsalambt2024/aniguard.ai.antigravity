@@ -34,10 +34,10 @@ export const AIRationCalculatorView: React.FC<AIRationCalculatorViewProps> = ({ 
         </div>
         <div>
           <h2 className="text-xl font-bold tracking-tight text-white">
-            AI Balanced Feed Ration Calculator
+            Feed Ration Optimizer
           </h2>
           <p className="text-xs text-slate-400">
-            Precision nutritional formulation compliant with ICAR-NDRI dairy cattle feeding standards
+            Nutritional formulation based on ICAR-NDRI cattle feeding standards
           </p>
         </div>
       </div>

@@ -125,9 +125,9 @@ export const AIHealthCheckModal: React.FC<AIHealthCheckModalProps> = ({
             <Activity className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-white">AI Health Check</h2>
+            <h2 className="text-xl font-bold tracking-tight text-white">AI Health Scan</h2>
             <p className="text-xs text-slate-400">
-              Upload animal photo or describe symptoms for early multi-signal risk screening
+              Multi-signal early risk screening based on physiological baselines
             </p>
           </div>
         </div>
@@ -300,7 +300,7 @@ export const AIHealthCheckModal: React.FC<AIHealthCheckModalProps> = ({
             <div className="bg-[#0E1A26] border border-[#182635] rounded-xl p-4">
               <h4 className="text-xs font-bold text-emerald-400 mb-2 uppercase tracking-wider flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Why AniGuard Warned Me (Clinical Evidence)</span>
+                <span>Clinical Findings & Evidence</span>
               </h4>
               <p className="text-xs text-slate-300 leading-relaxed">{result.explanation}</p>
             </div>
@@ -308,21 +308,18 @@ export const AIHealthCheckModal: React.FC<AIHealthCheckModalProps> = ({
             {/* Recommended Action */}
             <div className="bg-[#0E1A26] border border-[#182635] rounded-xl p-4">
               <h4 className="text-xs font-bold text-amber-400 mb-1.5 uppercase tracking-wider">
-                Recommended Immediate Precautions
+                Recommended Precautions
               </h4>
               <p className="text-xs text-slate-300 leading-relaxed">
                 {result.recommended_action}
               </p>
             </div>
 
-            {/* Mandatory Safety Disclaimer */}
+            {/* Safety Notice */}
             <div className="p-3 rounded-lg bg-[#141A22] border border-slate-800 text-[11px] text-slate-400 flex items-start gap-2">
               <ShieldAlert className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
               <span>
-                <strong>Veterinary Disclaimer:</strong> AniGuard AI provides early disease-risk
-                screening and decision support based on recorded physiological baseline deviations.
-                This is not a definitive veterinary diagnosis. Diagnostic testing and prescription
-                treatments require a licensed veterinary professional.
+                <strong>Clinical Notice:</strong> AniGuard AI provides predictive triage screening based on baseline deviations. Treatment protocols require evaluation by a registered veterinarian.
               </span>
             </div>
 

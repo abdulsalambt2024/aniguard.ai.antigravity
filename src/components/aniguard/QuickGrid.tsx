@@ -9,6 +9,7 @@ import {
   BookPlus,
   GraduationCap,
   Layers,
+  CreditCard,
 } from 'lucide-react';
 import { AniGuardTab } from './AniGuardNavBar';
 
@@ -18,14 +19,14 @@ interface QuickGridProps {
 
 export const QuickGrid: React.FC<QuickGridProps> = ({ onNavigate }) => {
   const actions = [
-    { id: 'ai_check', label: 'AI Health Check', sub: 'Clinical Triage', icon: HeartPulse, color: 'text-emerald-400' },
-    { id: 'farm_ai', label: 'Farm AI Chat', sub: '24/7 Advisor', icon: Bot, color: 'text-cyan-400' },
-    { id: 'ration', label: 'Ration Calculator', sub: 'Feed Optimization', icon: Calculator, color: 'text-blue-400' },
-    { id: 'profit', label: 'Profit Intelligence', sub: 'Revenue Analysis', icon: TrendingUp, color: 'text-amber-400' },
-    { id: 'vaccinations', label: 'Vaccinations', sub: 'Schedule & Alerts', icon: Syringe, color: 'text-pink-400' },
+    { id: 'ai_check', label: 'AI Health Scan', sub: 'Clinical Triage', icon: HeartPulse, color: 'text-emerald-400' },
+    { id: 'farm_ai', label: 'Clinical Chat', sub: '24/7 AI Advisor', icon: Bot, color: 'text-cyan-400' },
+    { id: 'ration', label: 'Ration Planner', sub: 'Feed Optimization', icon: Calculator, color: 'text-blue-400' },
+    { id: 'profit', label: 'Herd Economics', sub: 'Profit Analysis', icon: TrendingUp, color: 'text-amber-400' },
+    { id: 'vaccinations', label: 'Vaccinations', sub: 'Preventive Schedule', icon: Syringe, color: 'text-pink-400' },
+    { id: 'pricing', label: 'Pro Plans', sub: 'Razorpay Billing', icon: CreditCard, color: 'text-[#D4AF37]' },
     { id: 'schemes', label: 'Govt Schemes', sub: 'Subsidies & Loans', icon: Landmark, color: 'text-emerald-400' },
-    { id: 'disease_library', label: 'Disease Guide', sub: 'ICAR / WOAH', icon: BookPlus, color: 'text-indigo-400' },
-    { id: 'learning', label: 'Learning Center', sub: 'Scientific Guides', icon: GraduationCap, color: 'text-purple-400' },
+    { id: 'disease_library', label: 'Disease Guide', sub: 'ICAR / WOAH Compendium', icon: BookPlus, color: 'text-indigo-400' },
   ];
 
   return (
@@ -38,7 +39,7 @@ export const QuickGrid: React.FC<QuickGridProps> = ({ onNavigate }) => {
               <Layers className="w-3.5 h-3.5" />
             </div>
             <h3 className="text-base font-bold text-white tracking-tight">
-              Quick Operations Hub
+              Clinical Operations
             </h3>
           </div>
           <span className="text-[10px] text-slate-400 font-mono bg-[#142333] px-2 py-0.5 rounded">
@@ -55,13 +56,13 @@ export const QuickGrid: React.FC<QuickGridProps> = ({ onNavigate }) => {
                 onClick={() => onNavigate(act.id as AniGuardTab)}
                 className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0E1A26] border border-[#182635] hover:border-emerald-500/50 hover:bg-[#122233] transition group text-center shadow-sm"
               >
-                <div className="w-8 h-8 rounded-lg bg-[#08101A] border border-slate-800 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform shadow-inner">
+                <div className="w-8 h-8 rounded-lg bg-[#08101A] border border-slate-800 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform shadow-inner">
                   <Icon className={`w-4 h-4 ${act.color}`} />
                 </div>
                 <span className="text-xs font-semibold text-slate-200 group-hover:text-white leading-tight">
                   {act.label}
                 </span>
-                <span className="text-[10px] text-slate-500 group-hover:text-slate-400 mt-0.5">
+                <span className="text-[10px] text-slate-500 group-hover:text-slate-400 mt-0.5 truncate max-w-full">
                   {act.sub}
                 </span>
               </button>
@@ -71,8 +72,8 @@ export const QuickGrid: React.FC<QuickGridProps> = ({ onNavigate }) => {
       </div>
 
       <div className="pt-3 mt-3 border-t border-[#182635] flex items-center justify-between text-[11px] text-slate-400">
-        <span>Instant Navigation</span>
-        <span className="text-emerald-400 font-semibold">1-Click Dispatch</span>
+        <span>Clinical Modules</span>
+        <span className="text-emerald-400 font-semibold font-mono">Ready</span>
       </div>
     </div>
   );

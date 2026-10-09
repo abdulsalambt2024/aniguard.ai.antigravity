@@ -49,6 +49,13 @@ export const AniGuardFooter: React.FC<AniGuardFooterProps> = ({
               <Lock className="w-3.5 h-3.5 text-[#D4AF37]" />
               <span>PostgreSQL RLS & Super Admin Protection</span>
             </div>
+
+            <span className="text-slate-600 hidden sm:inline">•</span>
+
+            <div className="flex items-center gap-1.5 text-slate-400">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Razorpay PCI-DSS Gateway: Active</span>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
@@ -73,12 +80,11 @@ export const AniGuardFooter: React.FC<AniGuardFooterProps> = ({
               <span className="font-bold text-white text-base tracking-tight">AniGuard</span>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              India's first AI-powered veterinary surveillance and farm intelligence platform.
-              Empowering rural dairy farmers and veterinary surgeons with predictive diagnostics.
+              Clinical decision support and early disease surveillance platform for modern dairy herds and veterinary practices.
             </p>
             <div className="flex items-center gap-2 pt-1 text-[11px] text-emerald-400">
               <ShieldCheck className="w-4 h-4" />
-              <span>ICAR-IVRI Standardized Differential Protocols</span>
+              <span>Standardized Veterinary Protocols</span>
             </div>
           </div>
 
@@ -94,7 +100,7 @@ export const AniGuardFooter: React.FC<AniGuardFooterProps> = ({
                   onClick={() => onNavigateTab('ai_check')}
                   className="hover:text-emerald-400 transition"
                 >
-                  AI Symptom Scanner & Scan Hub
+                  AI Health Scan & Triage
                 </button>
               </li>
               <li>
@@ -102,7 +108,7 @@ export const AniGuardFooter: React.FC<AniGuardFooterProps> = ({
                   onClick={() => onNavigateTab('ration')}
                   className="hover:text-emerald-400 transition"
                 >
-                  Precision AI Ration Calculator
+                  Precision Ration Planner
                 </button>
               </li>
               <li>
@@ -110,7 +116,7 @@ export const AniGuardFooter: React.FC<AniGuardFooterProps> = ({
                   onClick={() => onNavigateTab('profit')}
                   className="hover:text-emerald-400 transition"
                 >
-                  Dairy Economics & Profit Intelligence
+                  Herd Economics & Revenue
                 </button>
               </li>
               <li>
@@ -118,7 +124,7 @@ export const AniGuardFooter: React.FC<AniGuardFooterProps> = ({
                   onClick={() => onNavigateTab('vaccinations')}
                   className="hover:text-emerald-400 transition"
                 >
-                  Preventive Vaccination Calendar
+                  Preventive Vaccination Tracker
                 </button>
               </li>
               <li>
@@ -127,6 +133,14 @@ export const AniGuardFooter: React.FC<AniGuardFooterProps> = ({
                   className="hover:text-emerald-400 transition"
                 >
                   ICAR / WOAH Disease Compendium
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => onNavigateTab('pricing')}
+                  className="text-amber-400 hover:text-amber-300 font-semibold transition"
+                >
+                  Pro Plans & Razorpay Invoicing
                 </button>
               </li>
             </ul>

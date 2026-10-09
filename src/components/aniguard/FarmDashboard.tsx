@@ -4,7 +4,6 @@ import { FeaturedTipCard } from './FeaturedTipCard';
 import { LiveAnimalMonitor } from './LiveAnimalMonitor';
 import { UrgentAlertsCard } from './UrgentAlertsCard';
 import { QuickGrid } from './QuickGrid';
-import { SponsoredBanner } from './SponsoredBanner';
 import { Animal, FarmSummary, HealthAlert } from '../../types/aniguard';
 import { AniGuardTab } from './AniGuardNavBar';
 
@@ -86,11 +85,6 @@ export const FarmDashboard: React.FC<FarmDashboardProps> = ({
         <div className="h-full">
           <QuickGrid onNavigate={onNavigateTab} />
         </div>
-      </div>
-
-      {/* Bottom: Sponsored Outreach Banner */}
-      <div>
-        <SponsoredBanner />
       </div>
     </div>
   );

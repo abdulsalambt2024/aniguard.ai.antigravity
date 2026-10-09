@@ -20,15 +20,20 @@ import {
   Sparkles,
   RefreshCw,
   PhoneCall,
+  CreditCard,
 } from 'lucide-react';
 import { adminService, AdminUserRecord, AuditLogEntry, PROTECTED_SUPER_ADMIN_EMAILS } from '../../services/adminService';
 import { aniguardService } from '../../services/aniguardService';
+import { razorpayService } from '../../services/razorpayService';
+import { GSTInvoiceModal } from '../payment/GSTInvoiceModal';
+import { PaymentTransactionRecord } from '../../types/payment';
 import { toast } from 'sonner';
 
 type AdminTab =
   | 'overview'
   | 'users'
   | 'admins'
+  | 'payments'
   | 'disease_knowledge'
   | 'sources'
   | 'ai_models'
@@ -58,6 +63,7 @@ export const AniGuardAdminPanel: React.FC<AniGuardAdminPanelProps> = ({
     user?: AdminUserRecord;
     actionType: 'make_admin' | 'revoke_admin' | 'toggle_status';
   }>({ isOpen: false, actionType: 'make_admin' });
+  const [selectedAdminInvoice, setSelectedAdminInvoice] = useState<PaymentTransactionRecord | null>(null);
 
   const refreshData = () => {
     setUsers(adminService.getUsers());
@@ -167,6 +173,7 @@ export const AniGuardAdminPanel: React.FC<AniGuardAdminPanelProps> = ({
           { id: 'overview', label: 'System Overview', icon: Activity },
           { id: 'users', label: 'User Management', icon: Users },
           { id: 'admins', label: 'Admin Accounts', icon: ShieldAlert },
+          { id: 'payments', label: 'Razorpay Ledger', icon: CreditCard },
           { id: 'disease_knowledge', label: 'Disease Knowledge', icon: BookOpen },
           { id: 'sources', label: 'Trusted Sources', icon: Database },
           { id: 'ai_models', label: 'AI Models', icon: Sparkles },
@@ -520,6 +527,174 @@ export const AniGuardAdminPanel: React.FC<AniGuardAdminPanelProps> = ({
           </div>
         )}
 
+        {/* 3B. RAZORPAY PAYMENT GATEWAY & GST INVOICES */}
+        {activeTab === 'payments' && (
+          <div className="space-y-6">
+            {/* Gateway Status Header */}
+            <div className="p-5 rounded-xl bg-[#08101A] border border-[#182635] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2">
+                  <CreditCard className="w-5 h-5 text-emerald-400" />
+                  <h3 className="text-base font-bold text-white">Razorpay Gateway & Billing Ledger</h3>
+                  <span
+                    className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded border ${
+                      razorpayService.isLiveKeyConfigured()
+                        ? 'bg-emerald-950/60 text-emerald-400 border-emerald-800'
+                        : 'bg-amber-950/60 text-amber-400 border-amber-800'
+                    }`}
+                  >
+                    {razorpayService.isLiveKeyConfigured() ? 'Live Production Gateway' : 'Sandbox / Test Mode'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Active Key ID: <span className="font-mono text-cyan-400">{razorpayService.getRazorpayKeyId()}</span>
+                  {' '}• Configured in <code className="text-slate-300">.env (VITE_RAZORPAY_KEY_ID)</code>
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="text-right text-xs">
+                  <div className="text-slate-400">Compliance & Security</div>
+                  <div className="text-emerald-400 font-semibold font-mono">PCI-DSS 256-bit SSL</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Financial Overview Metrics */}
+            {(() => {
+              const txList = razorpayService.getTransactions();
+              const grossRevenue = txList.reduce((acc, t) => acc + (t.status === 'completed' ? t.amount : 0), 0);
+              const gstCollected = txList.reduce((acc, t) => acc + (t.status === 'completed' ? (t.tax_amount || 0) : 0), 0);
+              const completedCount = txList.filter((t) => t.status === 'completed').length;
+              const subCount = txList.filter((t) => t.item_type === 'subscription' && t.status === 'completed').length;
+
+              return (
+                <>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="p-4 rounded-xl bg-[#08101A] border border-[#182635]">
+                      <div className="text-xs text-slate-400 font-medium">Gross Revenue</div>
+                      <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-400 mt-1">
+                        ₹{grossRevenue.toLocaleString('en-IN')}
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-1 font-mono">{completedCount} successful txns</div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#08101A] border border-[#182635]">
+                      <div className="text-xs text-slate-400 font-medium">GST Collected (18%)</div>
+                      <div className="text-xl sm:text-2xl font-bold font-mono text-cyan-400 mt-1">
+                        ₹{gstCollected.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-1">SAC 998313 (CGST+SGST)</div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#08101A] border border-[#182635]">
+                      <div className="text-xs text-slate-400 font-medium">Pro Subscriptions</div>
+                      <div className="text-xl sm:text-2xl font-bold font-mono text-[#D4AF37] mt-1">
+                        {subCount}
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-1">Active herd licenses</div>
+                    </div>
+
+                    <div className="p-4 rounded-xl bg-[#08101A] border border-[#182635]">
+                      <div className="text-xs text-slate-400 font-medium">Ledger Sync</div>
+                      <div className="text-xl sm:text-2xl font-bold font-mono text-emerald-400 mt-1">
+                        100%
+                      </div>
+                      <div className="text-[10px] text-slate-500 mt-1">Supabase + Offline sync</div>
+                    </div>
+                  </div>
+
+                  {/* Transaction Ledger Table */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-bold text-white">Payment Transactions & Tax Invoices</h4>
+                      <span className="text-xs font-mono text-slate-400">{txList.length} total entries</span>
+                    </div>
+
+                    <div className="overflow-x-auto rounded-xl border border-[#182635]">
+                      <table className="w-full text-xs text-left">
+                        <thead className="bg-[#08101A] text-slate-400 border-b border-[#182635]">
+                          <tr>
+                            <th className="p-3 font-semibold">Date & Time</th>
+                            <th className="p-3 font-semibold">Invoice #</th>
+                            <th className="p-3 font-semibold">Customer</th>
+                            <th className="p-3 font-semibold">Plan / Service</th>
+                            <th className="p-3 font-semibold">Total Amount</th>
+                            <th className="p-3 font-semibold">Payment ID</th>
+                            <th className="p-3 font-semibold">Status</th>
+                            <th className="p-3 font-semibold text-right">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[#152332] font-mono text-slate-300">
+                          {txList.map((tx) => (
+                            <tr key={tx.id} className="hover:bg-[#0E1A26] transition">
+                              <td className="p-3 text-slate-400 font-sans">
+                                {new Date(tx.created_at).toLocaleDateString('en-IN', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </td>
+                              <td className="p-3 font-bold text-cyan-400">{tx.invoice_number}</td>
+                              <td className="p-3 font-sans">
+                                <div className="text-white font-medium">{tx.user_name}</div>
+                                <div className="text-[11px] text-slate-400 font-mono">{tx.user_email}</div>
+                              </td>
+                              <td className="p-3 font-sans">
+                                <span className="text-white font-medium block">{tx.item_name}</span>
+                                <span className="text-[10px] text-slate-500 uppercase">{tx.item_type}</span>
+                              </td>
+                              <td className="p-3">
+                                <span className="text-white font-bold">₹{tx.amount.toLocaleString('en-IN')}</span>
+                                <span className="text-[10px] text-slate-500 block">incl. 18% GST</span>
+                              </td>
+                              <td className="p-3 text-slate-400 text-[11px]">{tx.razorpay_payment_id}</td>
+                              <td className="p-3 font-sans">
+                                <span
+                                  className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                                    tx.status === 'completed'
+                                      ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800'
+                                      : 'bg-amber-950/80 text-amber-400 border border-amber-800'
+                                  }`}
+                                >
+                                  {tx.status}
+                                </span>
+                              </td>
+                              <td className="p-3 text-right">
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedAdminInvoice(tx)}
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#102336] hover:bg-[#16304b] text-cyan-400 hover:text-cyan-300 border border-cyan-800/50 text-xs font-sans font-medium transition"
+                                >
+                                  <FileText className="w-3.5 h-3.5" />
+                                  <span>GST Invoice</span>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+
+                          {txList.length === 0 && (
+                            <tr>
+                              <td colSpan={8} className="p-8 text-center text-slate-400 font-sans">
+                                <CreditCard className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                                <div className="font-semibold text-white">No payment transactions recorded yet</div>
+                                <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                                  Transactions initiated by farmers via the Pro Plans or Clinical Services checkout will appear here with full GST breakdown.
+                                </p>
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        )}
+
         {/* 4. DISEASE KNOWLEDGE */}
         {activeTab === 'disease_knowledge' && (
           <div className="space-y-4">
@@ -816,6 +991,15 @@ export const AniGuardAdminPanel: React.FC<AniGuardAdminPanelProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* GST Tax Invoice Viewer for Admin */}
+      {selectedAdminInvoice && (
+        <GSTInvoiceModal
+          isOpen={!!selectedAdminInvoice}
+          onClose={() => setSelectedAdminInvoice(null)}
+          transaction={selectedAdminInvoice}
+        />
       )}
     </div>
   );

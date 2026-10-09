@@ -77,16 +77,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-              Welcome back, <span className="text-[#10B981]">{summary.owner_name}!</span>
+              Welcome, <span className="text-[#10B981]">{summary.owner_name}</span>
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 max-w-xl leading-relaxed">
-              Overall herd health score is{' '}
-              <strong className="text-emerald-400 font-bold">{summary.herd_health_index}/100</strong>{' '}
-              with zero critical disease concurrence flags detected today across the herd.
+              Herd Health Index is <strong className="text-emerald-400 font-bold">{summary.herd_health_index}/100</strong> • 0 critical epidemic flags detected today
             </p>
           </div>
 
-          {/* Mini Health Status Ring for Mobile / Tablet */}
+          {/* Health Status Ring */}
           <div className="hidden md:flex items-center gap-3 bg-[#08101A] border border-[#182635] p-2.5 rounded-xl self-start sm:self-auto">
             <div className="relative w-12 h-12 flex items-center justify-center">
               <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
@@ -110,7 +108,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               <span className="absolute text-[11px] font-bold text-white">{healthPercent}%</span>
             </div>
             <div className="text-left pr-2">
-              <p className="text-[10px] text-slate-400 font-medium">Index Status</p>
+              <p className="text-[10px] text-slate-400 font-medium">Herd Status</p>
               <p className="text-xs font-bold text-emerald-400">Optimal</p>
             </div>
           </div>
@@ -123,7 +121,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#0C1E20] hover:bg-[#122A2D] border border-[#10B981]/50 text-[#10B981] text-xs font-semibold transition shadow-sm hover:shadow-emerald-950/20"
           >
             <Mic className="w-4 h-4 text-[#10B981]" />
-            <span>Voice Entry (बोलकर दर्ज करें)</span>
+            <span>Voice Log</span>
           </button>
 
           <button
@@ -131,7 +129,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#0C1E20] hover:bg-[#122A2D] border border-[#10B981]/50 text-[#10B981] text-xs font-semibold transition shadow-sm hover:shadow-emerald-950/20"
           >
             <HeartPulse className="w-4 h-4 text-[#10B981]" />
-            <span>AI Health Scan (स्वास्थ्य जांच)</span>
+            <span>AI Health Scan</span>
           </button>
 
           <button

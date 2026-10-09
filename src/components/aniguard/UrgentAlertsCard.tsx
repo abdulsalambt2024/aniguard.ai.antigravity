@@ -34,7 +34,7 @@ export const UrgentAlertsCard: React.FC<UrgentAlertsCardProps> = ({
               <AlertTriangle className="w-3.5 h-3.5" />
             </div>
             <h3 className="text-base font-bold text-white tracking-tight">
-              Urgent Alerts & Clinical Reminders
+              Health Alerts & Reminders
             </h3>
           </div>
           {unresolvedAlerts.length > 0 && (

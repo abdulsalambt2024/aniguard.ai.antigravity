@@ -12,6 +12,9 @@ import { GovtSchemesView } from '../components/aniguard/GovtSchemesView';
 import { DiseaseLibraryView } from '../components/aniguard/DiseaseLibraryView';
 import { LearningCenterView } from '../components/aniguard/LearningCenterView';
 import { AniGuardFooter } from '../components/aniguard/AniGuardFooter';
+import { AniGuardPaymentModal } from '../components/payment/AniGuardPaymentModal';
+import { SubscriptionPricingView } from '../components/payment/SubscriptionPricingView';
+import { razorpayService } from '../services/razorpayService';
 
 import { AIHealthCheckModal } from '../components/aniguard/AIHealthCheckModal';
 import { DailyLoggingModal } from '../components/aniguard/DailyLoggingModal';
@@ -46,6 +49,10 @@ export default function Home() {
   const [isAddAnimalOpen, setIsAddAnimalOpen] = useState(false);
   const [isVoiceEntryOpen, setIsVoiceEntryOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [activePlanTier, setActivePlanTier] = useState<'free' | 'pro' | 'enterprise'>(
+    razorpayService.getActiveSubscriptionTier()
+  );
   const [selectedAnimalForDetail, setSelectedAnimalForDetail] = useState<Animal | null>(null);
   const [preselectedAnimalId, setPreselectedAnimalId] = useState<string | undefined>(undefined);
 
@@ -142,6 +149,8 @@ export default function Home() {
         farmerName={displayName}
         userEmail={user?.email || currentUserEmail || null}
         userRole={currentUserRole}
+        activePlanTier={activePlanTier}
+        onUpgradeClick={() => setIsPaymentModalOpen(true)}
         onSignOut={async () => {
           await signOut();
           setCurrentUserEmail('');
@@ -240,6 +249,14 @@ export default function Home() {
 
         {activeTab === 'learning' && <LearningCenterView />}
 
+        {activeTab === 'pricing' && (
+          <SubscriptionPricingView
+            currentUserEmail={currentUserEmail}
+            currentUserName={displayName}
+            onPlanChanged={() => setActivePlanTier(razorpayService.getActiveSubscriptionTier())}
+          />
+        )}
+
         {activeTab === 'admin' && (
           <AniGuardAdminPanel
             currentUserEmail={currentUserEmail}
@@ -332,6 +349,14 @@ export default function Home() {
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
         onLoginSuccess={handleAuthSuccess}
+      />
+
+      <AniGuardPaymentModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        currentUserEmail={currentUserEmail}
+        currentUserName={displayName}
+        onPlanActivated={(tier) => setActivePlanTier(tier)}
       />
     </div>
   );

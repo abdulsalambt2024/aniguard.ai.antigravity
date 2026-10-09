@@ -31,10 +31,10 @@ export const DiseaseLibraryView: React.FC<DiseaseLibraryViewProps> = ({ diseases
           </div>
           <div>
             <h2 className="text-xl font-bold tracking-tight text-white">
-              Veterinary Disease Knowledge Base
+              Veterinary Disease Library
             </h2>
             <p className="text-xs text-slate-400">
-              Tier-1 Clinical Livestock Profiles verified from ICAR-NIVEDI & WOAH
+              Clinical livestock profiles verified from ICAR-NIVEDI & WOAH
             </p>
           </div>
         </div>

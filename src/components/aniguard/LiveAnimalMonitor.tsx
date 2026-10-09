@@ -45,11 +45,11 @@ export const LiveAnimalMonitor: React.FC<LiveAnimalMonitorProps> = ({
         <div className="flex items-center justify-between pb-3 border-b border-[#182635]">
           <div>
             <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-              <span>Live Animal Health Monitor</span>
+              <span>Live Herd Monitor</span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             </h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              Continuous individual baseline & anomaly tracking
+              Individual baseline & anomaly tracking
             </p>
           </div>
           <button
@@ -179,9 +179,9 @@ export const LiveAnimalMonitor: React.FC<LiveAnimalMonitorProps> = ({
       <div className="pt-3 mt-2 border-t border-[#182635] flex items-center justify-between text-[11px] text-slate-400">
         <span className="flex items-center gap-1">
           <Activity className="w-3.5 h-3.5 text-emerald-400" />
-          <span>Automated Daily Clinical Triage</span>
+          <span>Active Herd Surveillance</span>
         </span>
-        <span className="text-emerald-400 font-semibold">100% Monitored</span>
+        <span className="text-emerald-400 font-semibold font-mono">100% Synced</span>
       </div>
     </div>
   );

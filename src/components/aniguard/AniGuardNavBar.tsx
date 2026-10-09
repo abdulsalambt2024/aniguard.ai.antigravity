@@ -13,6 +13,7 @@ import {
   GraduationCap,
   ShieldCheck,
   Crown,
+  CreditCard,
 } from 'lucide-react';
 
 export type AniGuardTab =
@@ -27,6 +28,7 @@ export type AniGuardTab =
   | 'schemes'
   | 'disease_library'
   | 'learning'
+  | 'pricing'
   | 'admin';
 
 interface AniGuardNavBarProps {
@@ -45,7 +47,7 @@ export const AniGuardNavBar: React.FC<AniGuardNavBarProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const tabs = [
-    { id: 'home', label: 'Home', icon: LayoutDashboard },
+    { id: 'home', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'animals', label: 'Herd Roster', icon: PawPrint },
     {
       id: 'alerts',
@@ -53,14 +55,14 @@ export const AniGuardNavBar: React.FC<AniGuardNavBarProps> = ({
       icon: AlertTriangle,
       badge: urgentAlertCount > 0 ? urgentAlertCount : undefined,
     },
-    { id: 'ai_check', label: 'AI Health Check', icon: HeartPulse },
-    { id: 'farm_ai', label: 'Farm AI Advisor', icon: Bot },
-    { id: 'ration', label: 'Ration Calculator', icon: Calculator },
-    { id: 'profit', label: 'Profit Intelligence', icon: TrendingUp },
-    { id: 'vaccinations', label: 'Vaccination Calendar', icon: Syringe },
+    { id: 'ai_check', label: 'AI Health Scan', icon: HeartPulse },
+    { id: 'farm_ai', label: 'Clinical Chat', icon: Bot },
+    { id: 'ration', label: 'Ration Planner', icon: Calculator },
+    { id: 'profit', label: 'Herd Economics', icon: TrendingUp },
+    { id: 'vaccinations', label: 'Vaccinations', icon: Syringe },
+    { id: 'disease_library', label: 'Disease Library', icon: BookOpen },
     { id: 'schemes', label: 'Govt Schemes', icon: Landmark },
-    { id: 'disease_library', label: 'Disease Compendium', icon: BookOpen },
-    { id: 'learning', label: 'Learning Center', icon: GraduationCap },
+    { id: 'pricing', label: 'Pro Plans', icon: CreditCard },
   ];
 
   if (showAdminTab) {
