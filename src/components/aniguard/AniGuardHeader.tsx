@@ -48,43 +48,43 @@ export const AniGuardHeader: React.FC<AniGuardHeaderProps> = ({
   };
 
   return (
-    <header className="w-full bg-[#08101A] border-b border-[#1A2634] text-white px-4 lg:px-8 py-3 flex items-center justify-between sticky top-0 z-40">
+    <header className="w-full bg-[#08101A] border-b border-[#1A2634] text-white px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between sticky top-0 z-40 shadow-md">
       {/* Brand & Logo */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
         {/* Cow emblem circle logo */}
-        <div className="w-10 h-10 rounded-full border-2 border-[#10B981] bg-[#0E1C28] flex items-center justify-center p-1 shadow-sm">
-          <div className="text-[9px] font-black tracking-tighter text-[#10B981] leading-none text-center">
+        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-[#10B981] bg-[#0E1C28] flex items-center justify-center p-1 shadow-sm shrink-0">
+          <div className="text-[8px] sm:text-[9px] font-black tracking-tighter text-[#10B981] leading-none text-center">
             ANI<br />GUARD
           </div>
         </div>
 
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-lg tracking-tight text-white">AniGuard</span>
+        <div className="min-w-0">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <span className="font-bold text-base sm:text-lg tracking-tight text-white truncate">AniGuard</span>
             {userRole && getRoleBadge()}
           </div>
-          <p className="text-[11px] text-slate-400 hidden sm:block font-normal">
+          <p className="text-[10px] sm:text-[11px] text-slate-400 hidden xs:block sm:block font-normal truncate">
             Veterinary Intelligence & Herd Health
           </p>
         </div>
       </div>
 
       {/* Right Controls */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         {/* Emergency Vet Call button */}
         <button
           onClick={onEmergencyCall}
-          className="w-9 h-9 rounded-lg bg-[#DC2626] hover:bg-[#B91C1C] text-white flex items-center justify-center transition shadow-md shadow-red-950/40"
+          className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#DC2626] hover:bg-[#B91C1C] text-white flex items-center justify-center transition shadow-md shadow-red-950/40 active:scale-95"
           title="24/7 Emergency Veterinary Hotline"
         >
-          <Phone className="w-4 h-4 fill-current" />
+          <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current" />
         </button>
 
         {/* Subscription / Upgrade Badge */}
         <button
           type="button"
           onClick={onUpgradeClick}
-          className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition ${
+          className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg border text-[11px] sm:text-xs font-semibold transition active:scale-95 ${
             activePlanTier === 'enterprise'
               ? 'border-[#D4AF37]/60 bg-[#291F0E] text-[#D4AF37] hover:bg-[#382B14]'
               : activePlanTier === 'pro'
@@ -94,23 +94,26 @@ export const AniGuardHeader: React.FC<AniGuardHeaderProps> = ({
           title="Manage Subscription & Razorpay Billing"
         >
           {activePlanTier === 'enterprise' ? (
-            <Crown className="w-3.5 h-3.5 fill-[#D4AF37]" />
+            <Crown className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#D4AF37]" />
           ) : (
-            <Star className="w-3.5 h-3.5 fill-[#34D399]" />
+            <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-[#34D399]" />
           )}
-          <span>
+          <span className="hidden xs:inline">
             {activePlanTier === 'enterprise'
               ? 'Clinic Hub'
               : activePlanTier === 'pro'
               ? 'AniGuard Pro'
               : 'Upgrade to Pro'}
           </span>
+          <span className="xs:hidden">
+            {activePlanTier === 'enterprise' ? 'Clinic' : activePlanTier === 'pro' ? 'Pro' : 'Upgrade'}
+          </span>
         </button>
 
         {/* Auth / Account Button */}
         <button
           onClick={onAuthClick}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition ${
+          className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition active:scale-95 ${
             userEmail
               ? 'border-emerald-800 bg-[#0E2E25] text-emerald-300 hover:bg-[#134E3E]'
               : 'border-slate-700 bg-[#0E1A26] hover:bg-[#152434] text-slate-200'
@@ -124,16 +127,16 @@ export const AniGuardHeader: React.FC<AniGuardHeaderProps> = ({
         <div className="relative">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-2 pl-1 sm:pl-2 border-l border-slate-800 cursor-pointer focus:outline-none"
+            className="flex items-center gap-1 sm:gap-2 pl-1 sm:pl-2 border-l border-slate-800 cursor-pointer focus:outline-none py-0.5"
           >
             <div className="relative">
               <img
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
                 alt="Farmer Profile"
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-emerald-500"
+                className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover ring-2 ring-emerald-500"
               />
               <span
-                className={`absolute bottom-0 right-0 w-2.5 h-2.5 border-2 border-[#08101A] rounded-full ${
+                className={`absolute bottom-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 border-2 border-[#08101A] rounded-full ${
                   userEmail ? 'bg-emerald-500' : 'bg-slate-500'
                 }`}
               ></span>

@@ -55,11 +55,12 @@ export const DailyLoggingModal: React.FC<DailyLoggingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[#0B1520] border border-[#1A2634] rounded-2xl w-full max-w-lg text-white shadow-2xl p-6 relative">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto">
+      <div className="bg-[#0B1520] border border-[#1A2634] rounded-2xl w-full max-w-lg max-h-[92vh] sm:max-h-[90vh] overflow-y-auto text-white shadow-2xl p-4 sm:p-6 relative">
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-slate-400 hover:text-white transition p-1"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-white transition p-1.5 rounded-lg bg-[#0E1A26] border border-slate-800 z-10"
+          aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>

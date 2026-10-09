@@ -69,11 +69,44 @@ export const AniGuardNavBar: React.FC<AniGuardNavBarProps> = ({
     tabs.push({ id: 'admin', label: 'Administration', icon: ShieldCheck as any });
   }
 
+  const handleTabClick = (tabId: AniGuardTab, e?: React.MouseEvent<HTMLButtonElement>) => {
+    onTabChange(tabId);
+    if (e?.currentTarget) {
+      e.currentTarget.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  };
+
+  const activeTabObj = tabs.find((t) => t.id === activeTab) || tabs[0];
+
   return (
-    <nav className="relative w-full bg-[#08101A] border-b border-[#1A2634] px-4 lg:px-8 py-2.5">
+    <nav className="relative w-full bg-[#08101A] border-b border-[#1A2634] px-3 sm:px-6 lg:px-8 py-2">
+      {/* Mobile Selector Dropdown (visible on small screens for fast module switching) */}
+      <div className="md:hidden flex items-center justify-between gap-2 mb-2 pb-2 border-b border-[#152332]">
+        <div className="flex items-center gap-2 text-xs text-slate-300 font-semibold truncate">
+          <span className="text-slate-400">Module:</span>
+          <span className="text-[#10B981] font-bold flex items-center gap-1.5 truncate">
+            {React.createElement(activeTabObj.icon, { className: 'w-3.5 h-3.5 shrink-0 text-emerald-400' })}
+            {activeTabObj.label}
+          </span>
+        </div>
+
+        <select
+          value={activeTab}
+          onChange={(e) => onTabChange(e.target.value as AniGuardTab)}
+          className="bg-[#0E1A26] border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-emerald-500 font-medium"
+        >
+          {tabs.map((tab) => (
+            <option key={tab.id} value={tab.id}>
+              {tab.label} {tab.badge ? `(${tab.badge} alerts)` : ''}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Horizontal Tabs Scroll Container with Touch Support */}
       <div
         ref={scrollContainerRef}
-        className="flex items-center gap-1.5 overflow-x-auto scrollbar-none scroll-smooth min-w-max"
+        className="flex items-center gap-1.5 overflow-x-auto scrollbar-none scroll-smooth py-0.5 max-w-full"
       >
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -93,13 +126,13 @@ export const AniGuardNavBar: React.FC<AniGuardNavBarProps> = ({
           return (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id as AniGuardTab)}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              onClick={(e) => handleTabClick(tab.id as AniGuardTab, e)}
+              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 active:scale-95 ${
                 isActive ? activeClass : inactiveClass
               }`}
             >
               <Icon
-                className={`w-3.5 h-3.5 ${
+                className={`w-3.5 h-3.5 shrink-0 ${
                   isActive
                     ? isAdmin
                       ? 'text-[#D4AF37]'
@@ -109,9 +142,9 @@ export const AniGuardNavBar: React.FC<AniGuardNavBarProps> = ({
                     : 'text-slate-400'
                 }`}
               />
-              <span>{tab.label}</span>
+              <span className="whitespace-nowrap">{tab.label}</span>
               {tab.badge && (
-                <span className="w-4 h-4 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center animate-pulse">
+                <span className="w-4 h-4 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center animate-pulse shrink-0">
                   {tab.badge}
                 </span>
               )}

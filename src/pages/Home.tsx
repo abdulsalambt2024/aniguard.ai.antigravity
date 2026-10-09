@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { LayoutDashboard, PawPrint, HeartPulse, Mic, PhoneCall } from 'lucide-react';
 import { AniGuardHeader } from '../components/aniguard/AniGuardHeader';
 import { AniGuardNavBar, AniGuardTab } from '../components/aniguard/AniGuardNavBar';
 import { FarmDashboard } from '../components/aniguard/FarmDashboard';
@@ -179,7 +180,7 @@ export default function Home() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 py-6">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-6">
         {summary && activeTab === 'home' && (
           <FarmDashboard
             summary={summary}
@@ -264,6 +265,62 @@ export default function Home() {
           />
         )}
       </main>
+
+      {/* Mobile Quick Action Floating Dock (Fast one-tap access on phones & tablets) */}
+      <div className="md:hidden fixed bottom-3 left-3 right-3 z-40 bg-[#0B1520]/95 backdrop-blur-md border border-[#1A2634] rounded-2xl p-1.5 shadow-2xl flex items-center justify-around">
+        <button
+          onClick={() => {
+            setActiveTab('home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center justify-center p-1.5 rounded-xl transition ${
+            activeTab === 'home' ? 'text-[#10B981] bg-[#0E2E25]' : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <LayoutDashboard className="w-5 h-5" />
+          <span className="text-[10px] font-semibold mt-0.5">Home</span>
+        </button>
+
+        <button
+          onClick={() => {
+            setActiveTab('animals');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`flex flex-col items-center justify-center p-1.5 rounded-xl transition ${
+            activeTab === 'animals' ? 'text-[#10B981] bg-[#0E2E25]' : 'text-slate-400 hover:text-slate-200'
+          }`}
+        >
+          <PawPrint className="w-5 h-5" />
+          <span className="text-[10px] font-semibold mt-0.5">Herd</span>
+        </button>
+
+        {/* Action Button 1: AI Health Scan */}
+        <button
+          onClick={() => setIsAICheckOpen(true)}
+          className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-[#059669] text-white shadow-lg shadow-emerald-950/60 -mt-4 active:scale-95 transition"
+        >
+          <HeartPulse className="w-5 h-5" />
+          <span className="text-[10px] font-bold mt-0.5">AI Scan</span>
+        </button>
+
+        {/* Action Button 2: Voice Log */}
+        <button
+          onClick={() => setIsVoiceEntryOpen(true)}
+          className="flex flex-col items-center justify-center p-1.5 rounded-xl text-slate-400 hover:text-slate-200 active:scale-95 transition"
+        >
+          <Mic className="w-5 h-5 text-cyan-400" />
+          <span className="text-[10px] font-semibold mt-0.5">Voice</span>
+        </button>
+
+        {/* Emergency Hotline */}
+        <button
+          onClick={handleEmergencyCall}
+          className="flex flex-col items-center justify-center p-1.5 rounded-xl text-red-400 hover:text-red-300 active:scale-95 transition"
+        >
+          <PhoneCall className="w-5 h-5" />
+          <span className="text-[10px] font-semibold mt-0.5">Vet 24/7</span>
+        </button>
+      </div>
 
       {/* Enterprise Production Footer */}
       <AniGuardFooter

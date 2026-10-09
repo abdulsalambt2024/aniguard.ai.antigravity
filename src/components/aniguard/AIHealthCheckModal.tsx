@@ -109,24 +109,25 @@ export const AIHealthCheckModal: React.FC<AIHealthCheckModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-[#0B1520] border border-[#1A2634] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto text-white shadow-2xl p-6 relative">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-2.5 sm:p-4 overflow-y-auto">
+      <div className="bg-[#0B1520] border border-[#1A2634] rounded-2xl w-full max-w-2xl max-h-[92vh] sm:max-h-[90vh] overflow-y-auto text-white shadow-2xl p-4 sm:p-6 relative">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-slate-400 hover:text-white transition p-1"
+          className="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-white transition p-1.5 rounded-lg bg-[#0E1A26] border border-slate-800"
+          aria-label="Close modal"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal Header */}
-        <div className="flex items-center gap-3 pb-4 border-b border-[#182635]">
-          <div className="w-10 h-10 rounded-xl bg-[#0E2E25] text-[#10B981] flex items-center justify-center border border-[#134E3E]">
+        <div className="flex items-center gap-3 pb-3 sm:pb-4 border-b border-[#182635] pr-10">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0E2E25] text-[#10B981] flex items-center justify-center border border-[#134E3E] shrink-0">
             <Activity className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-white">AI Health Scan</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="text-lg sm:text-xl font-bold tracking-tight text-white">AI Health Scan</h2>
+            <p className="text-[11px] sm:text-xs text-slate-400">
               Multi-signal early risk screening based on physiological baselines
             </p>
           </div>
