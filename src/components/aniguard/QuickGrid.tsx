@@ -54,15 +54,15 @@ export const QuickGrid: React.FC<QuickGridProps> = ({ onNavigate }) => {
               <button
                 key={act.id}
                 onClick={() => onNavigate(act.id as AniGuardTab)}
-                className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0E1A26] border border-[#182635] hover:border-emerald-500/50 hover:bg-[#122233] transition group text-center shadow-sm"
+                className="flex flex-col items-center justify-center p-3 rounded-xl bg-[#0E1A26] border border-[#182635] hover:border-emerald-500/80 hover:bg-[#122233] transition-all group text-center shadow-sm active:scale-95 min-h-[72px]"
               >
-                <div className="w-8 h-8 rounded-lg bg-[#08101A] border border-slate-800 flex items-center justify-center mb-1.5 group-hover:scale-105 transition-transform shadow-inner">
-                  <Icon className={`w-4 h-4 ${act.color}`} />
+                <div className="w-8 h-8 rounded-lg bg-[#08101A] border border-slate-800 flex items-center justify-center mb-1.5 group-hover:scale-110 transition-transform shadow-inner shrink-0">
+                  <Icon className={`w-4.5 h-4.5 ${act.color}`} />
                 </div>
-                <span className="text-xs font-semibold text-slate-200 group-hover:text-white leading-tight">
+                <span className="text-xs font-bold text-slate-100 group-hover:text-white leading-tight">
                   {act.label}
                 </span>
-                <span className="text-[10px] text-slate-500 group-hover:text-slate-400 mt-0.5 truncate max-w-full">
+                <span className="text-[10px] text-slate-400 group-hover:text-emerald-300 mt-0.5 truncate max-w-full font-medium">
                   {act.sub}
                 </span>
               </button>

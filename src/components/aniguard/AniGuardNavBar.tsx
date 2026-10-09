@@ -79,13 +79,13 @@ export const AniGuardNavBar: React.FC<AniGuardNavBarProps> = ({
   const activeTabObj = tabs.find((t) => t.id === activeTab) || tabs[0];
 
   return (
-    <nav className="relative w-full bg-[#08101A] border-b border-[#1A2634] px-3 sm:px-6 lg:px-8 py-2">
-      {/* Mobile Selector Dropdown (visible on small screens for fast module switching) */}
+    <nav className="relative w-full bg-[#08101A] border-b border-[#1A2634] px-3 sm:px-6 lg:px-8 py-2.5">
+      {/* Mobile Fast Module Selector */}
       <div className="md:hidden flex items-center justify-between gap-2 mb-2 pb-2 border-b border-[#152332]">
         <div className="flex items-center gap-2 text-xs text-slate-300 font-semibold truncate">
-          <span className="text-slate-400">Module:</span>
+          <span className="text-slate-400">Active Module:</span>
           <span className="text-[#10B981] font-bold flex items-center gap-1.5 truncate">
-            {React.createElement(activeTabObj.icon, { className: 'w-3.5 h-3.5 shrink-0 text-emerald-400' })}
+            {React.createElement(activeTabObj.icon, { className: 'w-4 h-4 shrink-0 text-emerald-400' })}
             {activeTabObj.label}
           </span>
         </div>
@@ -93,7 +93,7 @@ export const AniGuardNavBar: React.FC<AniGuardNavBarProps> = ({
         <select
           value={activeTab}
           onChange={(e) => onTabChange(e.target.value as AniGuardTab)}
-          className="bg-[#0E1A26] border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-emerald-500 font-medium"
+          className="bg-[#0E1A26] border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-emerald-500 font-bold"
         >
           {tabs.map((tab) => (
             <option key={tab.id} value={tab.id}>
@@ -103,36 +103,33 @@ export const AniGuardNavBar: React.FC<AniGuardNavBarProps> = ({
         </select>
       </div>
 
-      {/* Horizontal Tabs Scroll Container with Touch Support */}
-      <div
-        ref={scrollContainerRef}
-        className="flex items-center gap-1.5 overflow-x-auto scrollbar-none scroll-smooth py-0.5 max-w-full"
-      >
+      {/* Clean Wrapped Buttons (NO horizontal sliding screen) */}
+      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           const isAdmin = tab.id === 'admin';
 
-          let activeClass = 'bg-[#059669] text-white shadow-sm font-semibold shadow-emerald-950/40';
+          let activeClass = 'bg-[#059669] text-white shadow-md font-bold shadow-emerald-950/50 ring-1 ring-emerald-400';
           if (isAdmin) {
-            activeClass = 'bg-[#291F0E] text-[#D4AF37] border border-[#D4AF37]/50 font-bold shadow-sm';
+            activeClass = 'bg-[#291F0E] text-[#D4AF37] border border-[#D4AF37] font-extrabold shadow-md';
           }
 
-          let inactiveClass = 'text-slate-400 hover:text-slate-200 hover:bg-[#0E1A26]';
+          let inactiveClass = 'bg-[#0E1A26] text-slate-300 hover:text-white hover:bg-[#142333] border border-slate-800';
           if (isAdmin) {
-            inactiveClass = 'text-[#D4AF37]/80 hover:text-[#D4AF37] hover:bg-[#1A1408] border border-[#D4AF37]/20';
+            inactiveClass = 'bg-[#1A1408] text-[#D4AF37]/90 hover:text-[#D4AF37] hover:bg-[#251D0C] border border-[#D4AF37]/30';
           }
 
           return (
             <button
               key={tab.id}
-              onClick={(e) => handleTabClick(tab.id as AniGuardTab, e)}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all shrink-0 active:scale-95 ${
+              onClick={() => onTabChange(tab.id as AniGuardTab)}
+              className={`flex items-center gap-2 px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold transition-all active:scale-95 shadow-sm min-h-[38px] ${
                 isActive ? activeClass : inactiveClass
               }`}
             >
               <Icon
-                className={`w-3.5 h-3.5 shrink-0 ${
+                className={`w-4 h-4 shrink-0 ${
                   isActive
                     ? isAdmin
                       ? 'text-[#D4AF37]'
@@ -144,7 +141,7 @@ export const AniGuardNavBar: React.FC<AniGuardNavBarProps> = ({
               />
               <span className="whitespace-nowrap">{tab.label}</span>
               {tab.badge && (
-                <span className="w-4 h-4 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center animate-pulse shrink-0">
+                <span className="w-4 h-4 rounded-full bg-red-600 text-white text-[10px] font-extrabold flex items-center justify-center animate-pulse shrink-0">
                   {tab.badge}
                 </span>
               )}

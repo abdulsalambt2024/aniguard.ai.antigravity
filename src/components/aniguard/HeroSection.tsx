@@ -114,29 +114,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         </div>
 
-        {/* Action Buttons - Optimized for touch on mobile */}
-        <div className="grid grid-cols-2 xs:flex xs:flex-wrap items-center gap-2 sm:gap-2.5 mt-4">
+        {/* Action Buttons - High Visibility & Touch-Friendly */}
+        <div className="grid grid-cols-1 xs:grid-cols-3 gap-2.5 sm:gap-3 mt-4">
           <button
             onClick={onVoiceEntry}
-            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-2 rounded-lg bg-[#0C1E20] hover:bg-[#122A2D] border border-[#10B981]/50 text-[#10B981] text-xs font-semibold transition shadow-sm active:scale-95"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#0E2E25] hover:bg-[#134E3E] border border-emerald-500/80 text-emerald-300 text-xs font-extrabold transition shadow-md shadow-emerald-950/40 active:scale-95 min-h-[44px]"
           >
-            <Mic className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#10B981]" />
+            <Mic className="w-4.5 h-4.5 text-emerald-400 shrink-0" />
             <span>Voice Log</span>
           </button>
 
           <button
             onClick={onAICheck}
-            className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-2 rounded-lg bg-[#0C1E20] hover:bg-[#122A2D] border border-[#10B981]/50 text-[#10B981] text-xs font-semibold transition shadow-sm active:scale-95"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs font-extrabold transition shadow-lg shadow-emerald-950/60 active:scale-95 min-h-[44px]"
           >
-            <HeartPulse className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#10B981]" />
+            <HeartPulse className="w-4.5 h-4.5 text-white shrink-0" />
             <span>AI Health Scan</span>
           </button>
 
           <button
             onClick={onAddAnimal}
-            className="col-span-2 xs:col-span-1 flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#142333] hover:bg-[#1C2F44] border border-slate-700 text-slate-200 text-xs font-medium transition active:scale-95"
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#142333] hover:bg-[#1C2F44] border border-slate-700 text-slate-100 text-xs font-bold transition active:scale-95 min-h-[44px]"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4.5 h-4.5 text-slate-300 shrink-0" />
             <span>Add Animal</span>
           </button>
         </div>
