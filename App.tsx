@@ -7,16 +7,15 @@ import LivestockDashboard from './components/LivestockDashboard';
 import FarmerDashboard from './components/FarmerDashboard';
 import ResearcherDashboard from './components/ResearcherDashboard';
 import PetEmergencyTriage from './components/PetEmergencyTriage';
-import DecisionEngine from './components/DecisionEngine';
 import AdvisorChat from './components/AdvisorChat';
-import ProfitAnalyzer from './components/ProfitAnalyzer';
 import Messenger from './components/Messenger';
-import SuccessStories from './components/SuccessStories';
-import VoiceAssistant from './components/VoiceAssistant';
-import VetFinder from './components/VetFinder';
-import VideoLab from './components/VideoLab';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
+import HomeDashboard from './components/HomeDashboard';
+import HerdPage from './components/HerdPage';
+import HealthAlerts from './components/HealthAlerts';
+import AskPage from './components/AskPage';
+import CareHub from './components/CareHub';
 import { getCurrentLocation } from './services/locationService';
 import { UI_STRINGS } from './constants';
 
@@ -122,60 +121,16 @@ const App: React.FC = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'health': return <PetEmergencyTriage profile={profile} />;
-      case 'market': return <DecisionEngine profile={profile} />;
-      case 'voice': return <VoiceAssistant profile={profile} />;
-      case 'chat': return <AdvisorChat profile={profile} />;
-      case 'finance': return <ProfitAnalyzer profile={profile} />;
-      case 'vets': return <VetFinder profile={profile} />;
-      case 'lab': return <VideoLab profile={profile} />;
-      case 'messages': return (
-        <Messenger 
-          profile={profile} 
-          conversations={conversations} 
-          onSendMessage={handleSendMessage} 
-          activeChatId={activeChatId}
-          setActiveChatId={setActiveChatId}
-        />
-      );
-      case 'listing': return <FarmerDashboard profile={profile} onNavigate={setActiveTab} onPostListing={() => {}} isListingMode={true} />;
-      case 'stories': return <SuccessStories profile={profile} />;
-      case 'radar': return (
-        <div className="bg-slate-900 text-white rounded-[3rem] p-12 text-center h-[500px] flex flex-col items-center justify-center relative overflow-hidden">
-           <i className="fa-solid fa-satellite-dish text-6xl text-emerald-500 mb-6 animate-pulse"></i>
-           <h2 className="text-3xl font-black uppercase tracking-tight">Active Disease Monitoring</h2>
-           <p className="mt-4 text-slate-400 max-w-sm">Aggregating thousands of health scans to predict the next outbreak in your district on AniGuard AI.</p>
-           <button onClick={() => setActiveTab('vets')} className="mt-8 px-8 py-4 bg-emerald-600 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-700 transition">Find Emergency Vet</button>
-           <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/grid.png')]"></div>
-        </div>
-      );
-      default: 
-        if (profile.role === UserRole.RESEARCHER) return <ResearcherDashboard profile={profile} listings={listings} />;
-        if (profile.role === UserRole.FARMER) return <FarmerDashboard profile={profile} onNavigate={setActiveTab} onPostListing={() => {}} conversations={conversations} />;
-        return <LivestockDashboard profile={profile} onNavigate={setActiveTab} />;
+      case 'herd': return <HerdPage profile={profile} />;
+      case 'alerts': return <HealthAlerts profile={profile} />;
+      case 'care': return <CareHub profile={profile} />;
+      case 'ask': return <AskPage profile={profile} />;
+      default: return <HomeDashboard profile={profile} onNavigate={setActiveTab} />;
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50/50 dark:bg-slate-950 pb-28 transition-colors duration-300">
-      <Header 
-        profile={profile} 
-        onReset={() => { setProfile(null); localStorage.removeItem('aniguard_profile'); }}
-        activeTab={activeTab} 
-        setActiveTab={setActiveTab} 
-        onLanguageChange={(l) => {
-          const up = {...profile, language: l};
-          setProfile(up);
-          localStorage.setItem('aniguard_profile', JSON.stringify(up));
-        }}
-        darkMode={darkMode}
-        toggleDarkMode={() => setDarkMode(!darkMode)}
-      />
-
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {renderContent()}
-      </main>
-
+    <div className="min-h-screen flex flex-col pb-24 transition-colors duration-300" style={{ backgroundColor: '#f3f2ed' }}>
       {/* Hidden Admin Gateway Trigger */}
       <button 
         onClick={() => setShowAdminGateway(true)}
@@ -183,26 +138,37 @@ const App: React.FC = () => {
         title="Admin Entry"
       />
 
-      <footer className="fixed bottom-0 left-0 right-0 glass-panel border-t border-slate-200 dark:border-slate-800 z-[100] px-4 pb-safe-area shadow-[0_-4px_10px_rgba(0,0,0,0.03)] transition-colors">
-        <div className="max-w-7xl mx-auto flex justify-around items-center h-20">
-          <FooterLink active={activeTab === 'home'} onClick={() => setActiveTab('home')} label={strings.home} icon="fa-house" />
-          <FooterLink active={activeTab === 'health'} onClick={() => setActiveTab('health')} label={strings.health} icon="fa-stethoscope" />
-          <FooterLink active={activeTab === 'vets'} onClick={() => setActiveTab('vets')} label="Vets" icon="fa-map-location-dot" />
-          <FooterLink active={activeTab === 'lab'} onClick={() => setActiveTab('lab')} label="Video" icon="fa-clapperboard" />
-          <FooterLink active={activeTab === 'voice'} onClick={() => setActiveTab('voice')} label="Live" icon="fa-microphone" />
+      <main className="flex-1 w-full max-w-lg mx-auto px-4 pt-10 pb-4">
+        {renderContent()}
+      </main>
+
+      {/* Bottom Nav */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[100]" style={{ width: 'calc(100% - 32px)', maxWidth: '400px' }}>
+        <div className="flex justify-around items-center px-3 py-2 rounded-full shadow-xl" style={{ backgroundColor: '#1a3c2b' }}>
+          <NavBtn active={activeTab === 'home'} onClick={() => setActiveTab('home')} label="Home" />
+          <NavBtn active={activeTab === 'herd'} onClick={() => setActiveTab('herd')} label="Herd" />
+          <NavBtn active={activeTab === 'alerts'} onClick={() => setActiveTab('alerts')} label="Alerts" />
+          <NavBtn active={activeTab === 'care'} onClick={() => setActiveTab('care')} label="Care" />
+          <NavBtn active={activeTab === 'ask'} onClick={() => setActiveTab('ask')} label="Ask" />
         </div>
-      </footer>
+      </div>
     </div>
   );
 };
 
-const FooterLink = ({ active, onClick, label, icon }: any) => (
-  <button onClick={onClick} className={`flex flex-col items-center justify-center gap-1 transition-all group ${active ? 'text-emerald-700 dark:text-emerald-500' : 'text-slate-400'}`}>
-    <div className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all ${active ? 'bg-emerald-50 dark:bg-emerald-900/30 scale-105' : 'bg-transparent'}`}>
-      <i className={`fa-solid ${icon} text-lg`}></i>
-    </div>
-    <span className="text-[8px] font-black uppercase tracking-[0.2em]">{label}</span>
+
+const NavBtn = ({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) => (
+  <button
+    onClick={onClick}
+    className="px-4 py-2 rounded-full text-sm font-semibold transition-all"
+    style={active
+      ? { backgroundColor: '#F5A623', color: '#1a3c2b' }
+      : { color: '#a5c9b4' }
+    }
+  >
+    {label}
   </button>
 );
 
 export default App;
+
