@@ -1,21 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, PawPrint, HeartPulse, Mic, PhoneCall } from 'lucide-react';
-import { AniGuardHeader } from '../components/aniguard/AniGuardHeader';
-import { AniGuardNavBar, AniGuardTab } from '../components/aniguard/AniGuardNavBar';
-import { FarmDashboard } from '../components/aniguard/FarmDashboard';
-import { AnimalsListView } from '../components/aniguard/AnimalsListView';
-import { HealthAlertsView } from '../components/aniguard/HealthAlertsView';
-import { FarmAIAssistant } from '../components/aniguard/FarmAIAssistant';
-import { AIRationCalculatorView } from '../components/aniguard/AIRationCalculatorView';
-import { ProfitIntelligenceView } from '../components/aniguard/ProfitIntelligenceView';
-import { VaccinationCalendarView } from '../components/aniguard/VaccinationCalendarView';
-import { GovtSchemesView } from '../components/aniguard/GovtSchemesView';
-import { DiseaseLibraryView } from '../components/aniguard/DiseaseLibraryView';
-import { LearningCenterView } from '../components/aniguard/LearningCenterView';
-import { AniGuardFooter } from '../components/aniguard/AniGuardFooter';
+import { PdfHeader } from '../components/pdf/PdfHeader';
+import { AniGuardPdfNavBar, PdfNavTab } from '../components/pdf/AniGuardPdfNavBar';
+import { PdfHomeView } from '../components/pdf/PdfHomeView';
+import { PdfHerdView } from '../components/pdf/PdfHerdView';
+import { PdfAlertsView } from '../components/pdf/PdfAlertsView';
+import { PdfCareHubView, CareSubTab } from '../components/pdf/PdfCareHubView';
+import { PdfAskAniGuardView } from '../components/pdf/PdfAskAniGuardView';
+import { PdfProfitView } from '../components/pdf/PdfProfitView';
+
 import { AniGuardPaymentModal } from '../components/payment/AniGuardPaymentModal';
-import { SubscriptionPricingView } from '../components/payment/SubscriptionPricingView';
 import { razorpayService } from '../services/razorpayService';
+import { DesktopSidebar, DesktopNavId } from '../components/desktop/DesktopSidebar';
 
 import { AIHealthCheckModal } from '../components/aniguard/AIHealthCheckModal';
 import { DailyLoggingModal } from '../components/aniguard/DailyLoggingModal';
@@ -25,15 +20,16 @@ import { VoiceEntryModal } from '../components/aniguard/VoiceEntryModal';
 import { AuthModal } from '../components/aniguard/AuthModal';
 
 import { AniGuardAdminPanel } from '../components/admin/AniGuardAdminPanel';
-import { adminService } from '../services/adminService';
 import { aniguardService } from '../services/aniguardService';
-import { Animal, FarmSummary, HealthAlert, HealthPrediction } from '../types/aniguard';
+import { Animal, FarmSummary, HealthAlert } from '../types/aniguard';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 export default function Home() {
   const { user, role: authRole, signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState<AniGuardTab>('home');
+  const [activeTab, setActiveTab] = useState<PdfNavTab | 'admin'>('home');
+  const [homeSubView, setHomeSubView] = useState<'overview' | 'profit'>('overview');
+  const [careSubTab, setCareSubTab] = useState<CareSubTab | null>(null);
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [alerts, setAlerts] = useState<HealthAlert[]>([]);
   const [summary, setSummary] = useState<FarmSummary | null>(null);
@@ -71,7 +67,7 @@ export default function Home() {
   useEffect(() => {
     if (user) {
       setCurrentUserEmail(user.email || '');
-      const resolvedRole = (authRole === 'super_admin' || authRole === 'admin') ? authRole : 'user';
+      const resolvedRole = authRole === 'super_admin' || authRole === 'admin' ? authRole : 'user';
       setCurrentUserRole(resolvedRole);
     } else {
       setCurrentUserEmail('');
@@ -133,214 +129,297 @@ export default function Home() {
     ? aniguardService.getDailyRecords(selectedAnimalForDetail.id)
     : [];
 
-  const displayName = user?.user_metadata?.full_name || (
-    currentUserRole === 'super_admin'
-      ? (currentUserEmail.includes('abdul') ? 'Abdul Salam' : currentUserEmail.includes('hayat') ? 'Hayat Amr' : 'Super Admin')
+  const displayName =
+    user?.user_metadata?.full_name ||
+    (currentUserRole === 'super_admin'
+      ? currentUserEmail.includes('abdul')
+        ? 'Abdul Salam'
+        : currentUserEmail.includes('hayat')
+        ? 'Hayat Amr'
+        : 'Super Admin'
       : currentUserRole === 'admin'
       ? 'Dr. Arvind Patel'
-      : summary?.owner_name || 'Ramesh Kumar'
-  );
+      : summary?.owner_name || 'Ramesh');
+
+  const getDesktopNavId = (): DesktopNavId => {
+    if (activeTab === 'home') {
+      return homeSubView === 'profit' ? 'profit' : 'overview';
+    }
+    if (activeTab === 'herd') return 'herd';
+    if (activeTab === 'alerts') return 'alerts';
+    if (activeTab === 'ask') return 'ask';
+    if (activeTab === 'care') {
+      if (careSubTab === 'vaccines') return 'vaccines';
+      if (careSubTab === 'disease_guide') return 'disease_guide';
+      if (careSubTab === 'feed_plan') return 'feed_plan';
+      if (careSubTab === 'govt_support') return 'govt_support';
+      if (careSubTab === 'plans') return 'subscription';
+      return 'disease_guide';
+    }
+    return 'overview';
+  };
+
+  const handleDesktopNavigate = (navId: DesktopNavId) => {
+    switch (navId) {
+      case 'overview':
+        setActiveTab('home');
+        setHomeSubView('overview');
+        break;
+      case 'herd':
+        setActiveTab('herd');
+        break;
+      case 'ai_scan':
+        setIsAICheckOpen(true);
+        break;
+      case 'alerts':
+        setActiveTab('alerts');
+        break;
+      case 'vaccines':
+        setActiveTab('care');
+        setCareSubTab('vaccines');
+        break;
+      case 'disease_guide':
+        setActiveTab('care');
+        setCareSubTab('disease_guide');
+        break;
+      case 'feed_plan':
+        setActiveTab('care');
+        setCareSubTab('feed_plan');
+        break;
+      case 'govt_support':
+        setActiveTab('care');
+        setCareSubTab('govt_support');
+        break;
+      case 'ask':
+        setActiveTab('ask');
+        break;
+      case 'profit':
+        setActiveTab('home');
+        setHomeSubView('profit');
+        break;
+      case 'subscription':
+        setActiveTab('care');
+        setCareSubTab('plans');
+        break;
+      case 'settings':
+        setIsAuthOpen(true);
+        break;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   return (
-    <div className="min-h-screen bg-[#070E17] text-slate-100 flex flex-col font-sans selection:bg-emerald-500 selection:text-black">
-      {/* Top Header */}
-      <AniGuardHeader
-        onEmergencyCall={handleEmergencyCall}
-        onAuthClick={() => setIsAuthOpen(true)}
-        farmerName={displayName}
-        userEmail={user?.email || currentUserEmail || null}
-        userRole={currentUserRole}
-        activePlanTier={activePlanTier}
-        onUpgradeClick={() => setIsPaymentModalOpen(true)}
-        onSignOut={async () => {
-          await signOut();
-          setCurrentUserEmail('');
-          setCurrentUserRole('user');
-          setActiveTab('home');
-        }}
-      />
-
-      {/* Sub Navigation Bar */}
-      <AniGuardNavBar
-        activeTab={activeTab}
-        showAdminTab={currentUserRole === 'super_admin' || currentUserRole === 'admin'}
-        onTabChange={(tab) => {
-          if (tab === 'ai_check') {
-            setIsAICheckOpen(true);
-          } else if (tab === 'admin' && currentUserRole === 'user') {
-            toast.error('Unauthorized Access', {
-              description: 'Administrative privileges required to access the AniGuard Control Center.',
-            });
-            setActiveTab('home');
-          } else {
-            setActiveTab(tab);
-          }
-        }}
-        urgentAlertCount={urgentAlertCount}
-      />
-
-      {/* Main Content Area */}
-      <main className="flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 md:pb-6">
-        {summary && activeTab === 'home' && (
-          <FarmDashboard
-            summary={summary}
-            animals={animals}
-            alerts={alerts}
-            onVoiceEntry={() => setIsVoiceEntryOpen(true)}
-            onAICheck={() => setIsAICheckOpen(true)}
-            onAddAnimal={() => setIsAddAnimalOpen(true)}
-            onSelectAnimal={handleSelectAnimal}
-            onViewAllAnimals={() => setActiveTab('animals')}
-            onScheduleVet={handleScheduleVet}
-            onAlertAction={handleScheduleVet}
-            onQuickLog={(aniId) => handleOpenLogModal(aniId)}
-            onQuickScan={(aniId) => {
-              setPreselectedAnimalId(aniId);
-              setIsAICheckOpen(true);
-            }}
-            onRefresh={refreshData}
-            onNavigateTab={(tab) => {
-              if (tab === 'ai_check') {
-                setIsAICheckOpen(true);
-              } else {
-                setActiveTab(tab);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }
-            }}
-          />
-        )}
-
-        {activeTab === 'animals' && (
-          <AnimalsListView
-            animals={animals}
-            onSelectAnimal={handleSelectAnimal}
-            onAddAnimal={() => setIsAddAnimalOpen(true)}
-          />
-        )}
-
-        {activeTab === 'alerts' && (
-          <HealthAlertsView
-            alerts={alerts}
-            onScheduleVet={handleScheduleVet}
-            onRefresh={refreshData}
-          />
-        )}
-
-        {activeTab === 'farm_ai' && <FarmAIAssistant animals={animals} />}
-
-        {activeTab === 'ration' && <AIRationCalculatorView animals={animals} />}
-
-        {activeTab === 'profit' && <ProfitIntelligenceView />}
-
-        {activeTab === 'vaccinations' && (
-          <VaccinationCalendarView
-            vaccinations={aniguardService.getVaccinations()}
-            animals={animals}
-            onRefresh={refreshData}
-          />
-        )}
-
-        {activeTab === 'schemes' && (
-          <GovtSchemesView schemes={aniguardService.getGovtSchemes()} />
-        )}
-
-        {activeTab === 'disease_library' && (
-          <DiseaseLibraryView diseases={aniguardService.getDiseases()} />
-        )}
-
-        {activeTab === 'learning' && <LearningCenterView />}
-
-        {activeTab === 'pricing' && (
-          <SubscriptionPricingView
-            currentUserEmail={currentUserEmail}
-            currentUserName={displayName}
-            onPlanChanged={() => setActivePlanTier(razorpayService.getActiveSubscriptionTier())}
-          />
-        )}
-
-        {activeTab === 'admin' && (
-          <AniGuardAdminPanel
-            currentUserEmail={currentUserEmail}
-            onClose={() => setActiveTab('home')}
-          />
-        )}
-      </main>
-
-      {/* Mobile Quick Action Floating Dock (Fast one-tap access on phones & tablets) */}
-      <div className="md:hidden fixed bottom-3 left-3 right-3 z-40 bg-[#0B1520]/95 backdrop-blur-md border border-[#1A2634] rounded-2xl p-1.5 shadow-2xl flex items-center justify-around">
-        <button
-          onClick={() => {
-            setActiveTab('home');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          className={`flex flex-col items-center justify-center p-1.5 rounded-xl transition ${
-            activeTab === 'home' ? 'text-[#10B981] bg-[#0E2E25]' : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <LayoutDashboard className="w-5 h-5" />
-          <span className="text-[10px] font-semibold mt-0.5">Home</span>
-        </button>
-
-        <button
-          onClick={() => {
-            setActiveTab('animals');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
-          className={`flex flex-col items-center justify-center p-1.5 rounded-xl transition ${
-            activeTab === 'animals' ? 'text-[#10B981] bg-[#0E2E25]' : 'text-slate-400 hover:text-slate-200'
-          }`}
-        >
-          <PawPrint className="w-5 h-5" />
-          <span className="text-[10px] font-semibold mt-0.5">Herd</span>
-        </button>
-
-        {/* Action Button 1: AI Health Scan */}
-        <button
-          onClick={() => setIsAICheckOpen(true)}
-          className="flex flex-col items-center justify-center p-2.5 rounded-xl bg-[#059669] text-white shadow-lg shadow-emerald-950/60 -mt-4 active:scale-95 transition"
-        >
-          <HeartPulse className="w-5 h-5" />
-          <span className="text-[10px] font-bold mt-0.5">AI Scan</span>
-        </button>
-
-        {/* Action Button 2: Voice Log */}
-        <button
-          onClick={() => setIsVoiceEntryOpen(true)}
-          className="flex flex-col items-center justify-center p-1.5 rounded-xl text-slate-400 hover:text-slate-200 active:scale-95 transition"
-        >
-          <Mic className="w-5 h-5 text-cyan-400" />
-          <span className="text-[10px] font-semibold mt-0.5">Voice</span>
-        </button>
-
-        {/* Emergency Hotline */}
-        <button
-          onClick={handleEmergencyCall}
-          className="flex flex-col items-center justify-center p-1.5 rounded-xl text-red-400 hover:text-red-300 active:scale-95 transition"
-        >
-          <PhoneCall className="w-5 h-5" />
-          <span className="text-[10px] font-semibold mt-0.5">Vet 24/7</span>
-        </button>
+    <div className="min-h-screen bg-[#F4F5EE] text-[#122B1E] font-sans antialiased selection:bg-[#EFA037] selection:text-[#122B1E] flex flex-row">
+      {/* Desktop Sidebar (Persistent 12-item navigation on desktop/large screens) */}
+      <div className="hidden lg:block">
+        <DesktopSidebar
+          currentNav={getDesktopNavId()}
+          onNavigate={handleDesktopNavigate}
+          urgentAlertCount={urgentAlertCount}
+          farmerName={displayName}
+          farmName={summary?.farm_name || 'GreenPastures Dairy Farm'}
+          activePlanTier={activePlanTier}
+          onEmergencyCall={handleEmergencyCall}
+          onOpenAdmin={() => setActiveTab('admin')}
+          isAdmin={currentUserRole === 'admin' || currentUserRole === 'super_admin'}
+        />
       </div>
 
-      {/* Enterprise Production Footer */}
-      <AniGuardFooter
-        onNavigateTab={(tab) => {
-          if (tab === 'ai_check') {
-            setIsAICheckOpen(true);
-          } else {
-            setActiveTab(tab);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        }}
-        onEmergencyCall={handleEmergencyCall}
-      />
+      {/* Main Content Area */}
+      <div className="flex-1 min-w-0 flex flex-col justify-between min-h-screen">
+        <div className="w-full max-w-md sm:max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex-1 flex flex-col justify-between relative">
+        {/* Header: On desktop always show top navbar; on mobile show only on Home Overview */}
+        {(activeTab === 'home' && homeSubView === 'overview') ? (
+          <PdfHeader
+            farmerName={displayName}
+            farmName={summary?.farm_name || 'GreenPastures Dairy Farm'}
+            location={summary?.location || 'Anand'}
+            userEmail={user?.email || currentUserEmail || null}
+            userRole={currentUserRole}
+            activeTab={activeTab}
+            onTabChange={(tab) => {
+              if (tab === 'home') setHomeSubView('overview');
+              if (tab === 'care') setCareSubTab(null);
+              setActiveTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            urgentAlertCount={urgentAlertCount}
+            onOpenAdmin={() => setActiveTab('admin')}
+            onOpenAuth={() => setIsAuthOpen(true)}
+            onSignOut={async () => {
+              await signOut();
+              setCurrentUserEmail('');
+              setCurrentUserRole('user');
+              setActiveTab('home');
+            }}
+            onEmergencyCall={handleEmergencyCall}
+          />
+        ) : (
+          <div className="hidden md:block">
+            <PdfHeader
+              farmerName={displayName}
+              farmName={summary?.farm_name || 'GreenPastures Dairy Farm'}
+              location={summary?.location || 'Anand'}
+              userEmail={user?.email || currentUserEmail || null}
+              userRole={currentUserRole}
+              activeTab={activeTab}
+              onTabChange={(tab) => {
+                if (tab === 'home') setHomeSubView('overview');
+                if (tab === 'care') setCareSubTab(null);
+                setActiveTab(tab);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              urgentAlertCount={urgentAlertCount}
+              onOpenAdmin={() => setActiveTab('admin')}
+              onOpenAuth={() => setIsAuthOpen(true)}
+              onSignOut={async () => {
+                await signOut();
+                setCurrentUserEmail('');
+                setCurrentUserRole('user');
+                setActiveTab('home');
+              }}
+              onEmergencyCall={handleEmergencyCall}
+            />
+          </div>
+        )}
 
-      {/* Global Modals */}
+        {/* Main Body Views */}
+        <main className="flex-1 mt-1">
+          {/* Page 1: Home View (Overview or Profit) */}
+          {activeTab === 'home' && (
+            <>
+              {homeSubView === 'overview' && summary && (
+                <PdfHomeView
+                  summary={summary}
+                  animals={animals}
+                  alerts={alerts}
+                  farmerName={displayName}
+                  onRunHealthScan={() => setIsAICheckOpen(true)}
+                  onCallVet={handleScheduleVet}
+                  onSelectAnimal={handleSelectAnimal}
+                  onVoiceLog={() => setIsVoiceEntryOpen(true)}
+                  onOpenFeedPlan={() => {
+                    setCareSubTab('feed_plan');
+                    setActiveTab('care');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenSchemes={() => {
+                    setCareSubTab('govt_support');
+                    setActiveTab('care');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenProfit={() => {
+                    setHomeSubView('profit');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  onOpenAlerts={() => {
+                    setActiveTab('alerts');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              )}
+
+              {homeSubView === 'profit' && (
+                <PdfProfitView
+                  onBack={() => {
+                    setHomeSubView('overview');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                />
+              )}
+            </>
+          )}
+
+          {/* Page 2: Your Herd View */}
+          {activeTab === 'herd' && (
+            <PdfHerdView
+              animals={animals}
+              onSelectAnimal={handleSelectAnimal}
+              onAddAnimal={() => setIsAddAnimalOpen(true)}
+            />
+          )}
+
+          {/* Page 3: Health Alerts View */}
+          {activeTab === 'alerts' && (
+            <PdfAlertsView
+              alerts={alerts}
+              onScheduleVet={handleScheduleVet}
+              onResolveAlert={(id) => {
+                aniguardService.resolveAlert(id);
+                refreshData();
+              }}
+              onRefresh={refreshData}
+            />
+          )}
+
+          {/* Care Hub (Disease Guide, Feed Plan, Govt Support, Plans, Vaccines) */}
+          {activeTab === 'care' && (
+            <PdfCareHubView
+              initialSubTab={careSubTab}
+              currentUserEmail={currentUserEmail}
+              currentUserName={displayName}
+              onBookVet={(animalName) => {
+                toast.success(`Veterinary appointment initiated for ${animalName}!`);
+                handleEmergencyCall();
+              }}
+              onAddVaccinationRecord={() => {
+                toast.info('Vaccination schedule sync active.');
+                refreshData();
+              }}
+              onUpgradeSuccess={() => setActivePlanTier(razorpayService.getActiveSubscriptionTier())}
+            />
+          )}
+
+          {/* Page 9: Ask AniGuard View */}
+          {activeTab === 'ask' && <PdfAskAniGuardView />}
+
+          {/* Administration Control Panel */}
+          {activeTab === 'admin' && (
+            <div className="py-2">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#E5E7DC]">
+                <h2 className="text-base font-bold text-[#142C1F]">Admin Control Center</h2>
+                <button
+                  onClick={() => setActiveTab('home')}
+                  className="px-3 py-1 rounded-full bg-[#142C1F] text-white text-xs font-semibold"
+                >
+                  Back to Farm
+                </button>
+              </div>
+              <AniGuardAdminPanel
+                currentUserEmail={currentUserEmail}
+                onClose={() => setActiveTab('home')}
+              />
+            </div>
+          )}
+        </main>
+
+        {/* Floating Bottom Navigation Bar */}
+        {activeTab !== 'admin' && (
+          <AniGuardPdfNavBar
+            activeTab={activeTab}
+            onTabChange={(tab) => {
+              if (tab === 'home') {
+                setHomeSubView('overview');
+              }
+              if (tab === 'care') {
+                setCareSubTab(null);
+              }
+              setActiveTab(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            urgentAlertCount={urgentAlertCount}
+          />
+        )}
+        </div>
+      </div>
+
+      {/* Global Modals (AI Health Scan, Daily Log, Add Animal, Detail, Voice, Auth, Razorpay Payment) */}
       <AIHealthCheckModal
         isOpen={isAICheckOpen}
         onClose={() => setIsAICheckOpen(false)}
         animals={animals}
         diseases={aniguardService.getDiseases()}
+        onAssessmentSaved={refreshData}
         onEscalateVet={(animalId, predId) => {
           const ani = animals.find((a) => a.id === animalId);
           toast.success(`Veterinary escalation created for ${ani?.name || 'animal'}!`);

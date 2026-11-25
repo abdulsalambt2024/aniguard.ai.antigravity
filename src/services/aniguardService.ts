@@ -454,7 +454,8 @@ class AniGuardService {
   }
 
   /**
-   * Recalculates predictive risk scores and health indices for the entire herd
+   * Recalculates predictive risk scores and health indices for the entire herd,
+   * and automatically generates/updates deduplicated early-warning alerts.
    */
   public runHerdEvaluation() {
     this.animals.forEach((animal) => {
@@ -469,14 +470,64 @@ class AniGuardService {
       this.predictions[animal.id] = res.prediction;
       animal.current_health_score = res.computedHealthScore;
 
-      if (res.computedHealthScore >= 85) {
+      if (res.prediction.risk_level === 'Normal') {
         animal.health_status = 'Healthy';
-      } else if (res.computedHealthScore >= 70) {
+      } else if (res.prediction.risk_level === 'Watch') {
         animal.health_status = 'Watch';
-      } else if (res.computedHealthScore >= 50) {
+      } else if (res.prediction.risk_level === 'Early Risk' || res.prediction.risk_level === 'High Risk') {
         animal.health_status = 'Sick';
       } else {
         animal.health_status = 'Critical';
+      }
+
+      // Auto-create or update early-detection alert when risk >= Early Risk (or High/Critical)
+      if (
+        res.prediction.risk_level === 'Early Risk' ||
+        res.prediction.risk_level === 'High Risk' ||
+        res.prediction.risk_level === 'Critical'
+      ) {
+        const alertId = `auto_risk_${animal.id}`;
+        const existingIdx = this.alerts.findIndex((a) => a.id === alertId && !a.is_resolved);
+
+        const hasFever = res.evidence.some((e) => e.feature_name.toLowerCase().includes('temperature'));
+        const hasMilkDrop = res.evidence.some((e) => e.feature_name.toLowerCase().includes('milk'));
+        const alertType: HealthAlert['alert_type'] =
+          res.evidence.length >= 2
+            ? 'multi_symptom'
+            : hasFever
+            ? 'fever'
+            : hasMilkDrop
+            ? 'milk_drop'
+            : 'multi_symptom';
+
+        const riskAlert: HealthAlert = {
+          id: alertId,
+          animal_id: animal.id,
+          farm_id: animal.farm_id,
+          tag_id: animal.tag_id,
+          animal_name: `${animal.name} (${animal.breed})`,
+          alert_type: alertType,
+          title: `${res.prediction.risk_level}: ${animal.name} Early-Warning Signal`,
+          description: res.prediction.explanation,
+          risk_level: res.prediction.risk_level,
+          recommended_action: res.prediction.recommended_action,
+          action_cta_label:
+            res.prediction.risk_level === 'Critical' || res.prediction.risk_level === 'High Risk'
+              ? 'Consult Veterinarian'
+              : 'Run AI Health Scan',
+          is_read: existingIdx >= 0 ? this.alerts[existingIdx].is_read : false,
+          is_acknowledged: existingIdx >= 0 ? this.alerts[existingIdx].is_acknowledged : false,
+          is_resolved: false,
+          model_version: res.prediction.model_version,
+          created_at:
+            existingIdx >= 0 ? this.alerts[existingIdx].created_at : new Date().toISOString(),
+        };
+
+        if (existingIdx >= 0) {
+          this.alerts[existingIdx] = riskAlert;
+        } else {
+          this.alerts.unshift(riskAlert);
+        }
       }
     });
 
@@ -567,6 +618,7 @@ class AniGuardService {
       health_status: 'Healthy',
     };
     this.animals.unshift(newAnimal);
+    this.markUserModified();
     this.runHerdEvaluation();
     return newAnimal;
   }
@@ -581,13 +633,45 @@ class AniGuardService {
     };
 
     this.dailyRecords.unshift(newRecord);
+    this.markUserModified();
     this.runHerdEvaluation();
     return newRecord;
   }
 
-  public resolveAlert(alertId: string) {
-    this.alerts = this.alerts.map((a) => (a.id === alertId ? { ...a, is_resolved: true } : a));
+  public acknowledgeAlert(alertId: string) {
+    this.alerts = this.alerts.map((a) =>
+      a.id === alertId
+        ? { ...a, is_read: true, is_acknowledged: true, acknowledged_at: new Date().toISOString() }
+        : a
+    );
     this.persistState();
+  }
+
+  public resolveAlert(alertId: string, outcomeNotes?: string) {
+    this.alerts = this.alerts.map((a) =>
+      a.id === alertId
+        ? {
+            ...a,
+            is_read: true,
+            is_resolved: true,
+            resolved_at: new Date().toISOString(),
+            outcome_notes: outcomeNotes || 'Marked resolved by farmer',
+          }
+        : a
+    );
+    this.persistState();
+  }
+
+  public isUsingDemoSeed(): boolean {
+    return !localStorage.getItem('aniguard_user_modified');
+  }
+
+  public markUserModified() {
+    try {
+      localStorage.setItem('aniguard_user_modified', 'true');
+    } catch {
+      // ignore storage errors
+    }
   }
 
   public addVaccination(vac: Omit<Vaccination, 'id'>): Vaccination {

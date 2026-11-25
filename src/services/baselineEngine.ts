@@ -114,12 +114,17 @@ export function evaluateMetricDeviation(
 }
 
 /**
- * Evaluates individual animal historical baseline across daily records
+ * Evaluates individual animal historical baseline across daily records.
+ * Excludes abnormal illness periods from baseline computation so illness
+ * does not normalize the baseline (PRD Section 7).
  */
 export function computeAnimalBaselines(records: DailyRecord[], fallbackBaseline: number = 15) {
   if (!records || records.length === 0) {
     return {
       hasData: false,
+      hasEstablishedBaseline: false,
+      recordCount: 0,
+      abnormalExcludedCount: 0,
       milkStats: calculateSeriesStats([fallbackBaseline]),
       tempStats: calculateSeriesStats([38.5]),
       consecutiveDropDays: 0,
@@ -131,13 +136,29 @@ export function computeAnimalBaselines(records: DailyRecord[], fallbackBaseline:
     (a, b) => new Date(a.record_date).getTime() - new Date(b.record_date).getTime()
   );
 
-  const milkValues = sorted.map((r) => r.total_milk_liters);
-  const tempValues = sorted
+  // Exclude clearly abnormal periods when computing healthy baseline
+  const healthyBaselineRecords = sorted.filter((r) => {
+    const hasFever = typeof r.temperature_celsius === 'number' && (r.temperature_celsius >= 39.3 || r.temperature_celsius <= 37.3);
+    const severeBehavioral = r.appetite === 'Anorexic' || r.rumination_level === 'Absent' || r.feces_status === 'Bloody';
+    const severeDrop = fallbackBaseline > 0 && r.total_milk_liters < fallbackBaseline * 0.72;
+    return !hasFever && !severeBehavioral && !severeDrop;
+  });
+
+  const abnormalExcludedCount = sorted.length - healthyBaselineRecords.length;
+  const baselinePool = healthyBaselineRecords.length >= 3 ? healthyBaselineRecords : sorted;
+
+  const milkValues = baselinePool.map((r) => r.total_milk_liters);
+  const tempValues = baselinePool
     .map((r) => r.temperature_celsius)
     .filter((t): t is number => typeof t === 'number');
 
-  const milkStats = calculateSeriesStats(milkValues.length >= 3 ? milkValues : [fallbackBaseline, fallbackBaseline, fallbackBaseline]);
-  const tempStats = calculateSeriesStats(tempValues.length >= 3 ? tempValues : [38.5, 38.6, 38.5]);
+  const hasEstablishedBaseline = healthyBaselineRecords.length >= 3;
+  const milkStats = calculateSeriesStats(
+    milkValues.length >= 3 ? milkValues : [fallbackBaseline, fallbackBaseline, fallbackBaseline]
+  );
+  const tempStats = calculateSeriesStats(
+    tempValues.length >= 3 ? tempValues : [38.5, 38.6, 38.5]
+  );
 
   // Count consecutive days of reduced milk production
   let consecutiveDropDays = 0;
@@ -155,7 +176,9 @@ export function computeAnimalBaselines(records: DailyRecord[], fallbackBaseline:
 
   return {
     hasData: true,
+    hasEstablishedBaseline,
     recordCount: sorted.length,
+    abnormalExcludedCount,
     milkStats,
     tempStats,
     consecutiveDropDays,

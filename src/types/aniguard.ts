@@ -1,10 +1,12 @@
 export type HealthStatus = 'Healthy' | 'Watch' | 'Sick' | 'Critical';
 export type RiskLevel = 'Normal' | 'Watch' | 'Early Risk' | 'High Risk' | 'Critical';
 export type ConfidenceLevel = 'Low' | 'Moderate' | 'High';
+export type DataQuality = 'Good' | 'Limited' | 'Poor';
 export type UrgencyLevel = 'Low' | 'Moderate' | 'High' | 'Emergency';
 
 export interface Animal {
   id: string;
+  farm_id?: string;
   tag_id: string;
   name: string;
   species: 'Cow' | 'Buffalo' | 'Goat' | 'Sheep';
@@ -77,22 +79,30 @@ export interface PredictionEvidence {
 export interface HealthPrediction {
   id: string;
   animal_id: string;
+  farm_id?: string;
   prediction_date: string;
   prediction_window: '3d' | '7d' | '14d';
-  risk_score: number; // 0 - 100
+  risk_score: number; // 0 - 100 (heuristic early-warning index, NOT calibrated disease probability)
+  is_calibrated_probability?: false;
   risk_level: RiskLevel;
   confidence_level: ConfidenceLevel;
+  data_quality?: DataQuality;
+  missing_data?: string[];
+  conflicting_data?: string[];
   primary_disease_id?: string;
   primary_condition_name?: string;
   differential_conditions?: Array<{
     disease_code: string;
     disease_name: string;
-    compatibility_score: number; // %
+    compatibility_score: number; // Pattern overlap % (non-diagnostic)
     matching_symptoms: string[];
   }>;
   evidence_list: PredictionEvidence[];
   explanation: string;
   recommended_action: string;
+  suggested_monitoring_interval?: string;
+  escalation_guidance?: string;
+  disclaimer?: string;
   model_version: string;
   status: 'Active' | 'Acknowledged' | 'Escalated' | 'Resolved' | 'Dismissed';
 }
@@ -100,17 +110,39 @@ export interface HealthPrediction {
 export interface HealthAlert {
   id: string;
   animal_id: string;
+  farm_id?: string;
   tag_id: string;
   animal_name: string;
   alert_type: 'vaccine_overdue' | 'milk_drop' | 'pregnancy_check' | 'fever' | 'multi_symptom';
   title: string;
   description: string;
-  risk_level: 'Watch' | 'High' | 'Critical';
+  risk_level: 'Watch' | 'Early Risk' | 'High' | 'High Risk' | 'Critical';
   recommended_action: string;
   action_cta_label?: string;
   is_read: boolean;
+  is_acknowledged?: boolean;
+  acknowledged_at?: string;
   is_resolved: boolean;
+  resolved_at?: string;
+  outcome_notes?: string;
+  model_version?: string;
   created_at: string;
+}
+
+export interface ImageQualityReport {
+  is_usable: boolean;
+  width: number;
+  height: number;
+  file_size_kb: number;
+  sharpness_score: number; // 0 - 100
+  brightness_score: number; // 0 - 255
+  glare_ratio: number; // 0 - 1
+  checks: Array<{
+    name: string;
+    status: 'pass' | 'warn' | 'fail';
+    detail: string;
+  }>;
+  guidance: string;
 }
 
 export interface Vaccination {
